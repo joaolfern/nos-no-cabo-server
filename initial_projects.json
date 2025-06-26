@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Webring Nós no Cabo",
+    "url": "https://github.com/joaolfern/nos-no-cabo-client"
+  },
+  {
+    "name": "Daily Dev Digest",
+    "url": "https://dailydevdigest.com"
+  },
+  {
+    "name": "Open Source Alley",
+    "url": "https://opensourcealley.com"
+  },
+  {
+    "name": "Frontend Focus",
+    "url": "https://frontendfocus.com"
+  },
+  {
+    "name": "Backend Basecamp",
+    "url": "https://backendbasecamp.com"
+  },
+  {
+    "name": "Code & Coffee",
+    "url": "https://codeandcoffee.com"
+  },
+  {
+    "name": "Pixel Playground",
+    "url": "https://pixelplayground.com"
+  },
+  {
+    "name": "DevOps Digest",
+    "url": "https://devopsdigest.com"
+  },
+  {
+    "name": "AI Avenue",
+    "url": "https://aiavenue.com"
+  }
+]

@@ -12,6 +12,7 @@ DATABASE_URL = "sqlite:///" + os.path.join(basedir, "..", "database.db")
 def init_db(app):
     """
     Initializes the database connection for the Flask app.
+    Also loads initial data from initial_projects.json if the table is empty.
     """
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -26,3 +27,14 @@ def init_db(app):
 
     with app.app_context():
         db.create_all()
+        from models.project import Project
+        if Project.query.count() == 0:
+            import json
+            initial_path = os.path.join(os.path.dirname(__file__), '..', 'initial_projects.json')
+            with open(initial_path, encoding='utf-8') as f:
+                projects = json.load(f)
+                for proj in projects:
+                    p = Project(name=proj['name'], url=proj['url'])
+                    db.session.add(p)
+                db.session.commit()
+            print("Initial projects loaded into the database.")
