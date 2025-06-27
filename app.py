@@ -74,12 +74,6 @@ def create_project(body: ProjectCreateSchema):
       400: Dados inválidos ou projeto já existe.
       500: Erro interno do servidor.
     """
-    if not body.name or not body.url:
-        return {"error": "Nome e URL são obrigatórios."}, 400
-    if len(body.name) < 3:
-        return {"error": "O nome do projeto deve ter pelo menos 3 caracteres."}, 400
-    if not body.url.startswith("http"):
-        return {"error": "A URL deve começar com http ou https."}, 400
     try:
         new_project = Project(name=body.name, url=body.url)
         db.session.add(new_project)
@@ -108,12 +102,6 @@ def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
       404: Projeto não encontrado.
       500: Erro interno do servidor.
     """
-    if not body.name or not body.url:
-        return {"error": "Nome e URL são obrigatórios."}, 400
-    if len(body.name) < 3:
-        return {"error": "O nome do projeto deve ter pelo menos 3 caracteres."}, 400
-    if not body.url.startswith("http"):
-        return {"error": "A URL deve começar com http ou https."}, 400
     try:
         project = Project.query.get_or_404(path.project_id)
         project.name = body.name
