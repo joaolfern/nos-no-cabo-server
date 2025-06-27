@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask_cors import CORS
 from models.database import init_db, db
@@ -48,6 +48,12 @@ def get_project(path: ProjectPathSchema):
 )
 def create_project(body: ProjectCreateSchema):
     """Create a new project."""
+    if not body.name or not body.url:
+        return {"error": "Nome e URL são obrigatórios."}, 400
+    if len(body.name) < 3:
+        return {"error": "O nome do projeto deve ter pelo menos 3 caracteres."}, 400
+    if not body.url.startswith("http"):
+        return {"error": "A URL deve começar com http ou https."}, 400
     try:
         new_project = Project(name=body.name, url=body.url)
         db.session.add(new_project)
@@ -63,6 +69,12 @@ def create_project(body: ProjectCreateSchema):
 @app.patch('/project/<int:project_id>', tags=[project_tag])
 def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
     """Update a project's name and url by ID."""
+    if not body.name or not body.url:
+        return {"error": "Nome e URL são obrigatórios."}, 400
+    if len(body.name) < 3:
+        return {"error": "O nome do projeto deve ter pelo menos 3 caracteres."}, 400
+    if not body.url.startswith("http"):
+        return {"error": "A URL deve começar com http ou https."}, 400
     try:
         project = Project.query.get_or_404(path.project_id)
         project.name = body.name
