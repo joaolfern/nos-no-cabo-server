@@ -27,7 +27,14 @@ def home():
 
 @app.get('/project', tags=[project_tag])
 def get_projects():
-    """Retrieve all projects."""
+    """Lista todos os projetos cadastrados.
+
+    Retorna uma lista de projetos.
+
+    Respostas:
+      200: Lista de projetos retornada com sucesso.
+      500: Erro interno do servidor.
+    """
     try:
         projects = Project.query.all()
         return jsonify([ProjectSchema.from_orm(project).dict() for project in projects])
@@ -36,7 +43,16 @@ def get_projects():
 
 @app.get('/project/<int:project_id>', tags=[project_tag])
 def get_project(path: ProjectPathSchema):
-    """Retrieve a specific project by ID"""
+    """Busca um projeto específico pelo ID.
+
+    Parâmetros:
+      - project_id (int): ID do projeto.
+
+    Respostas:
+      200: Projeto encontrado e retornado com sucesso.
+      404: Projeto não encontrado.
+      500: Erro interno do servidor.
+    """
     try:
         project = Project.query.get_or_404(path.project_id)
         return ProjectSchema.from_orm(project).dict()
@@ -47,7 +63,17 @@ def get_project(path: ProjectPathSchema):
     tags=[project_tag]
 )
 def create_project(body: ProjectCreateSchema):
-    """Create a new project."""
+    """Cria um novo projeto.
+
+    Corpo da requisição:
+      - name (str): Nome do projeto (mínimo 3 caracteres, obrigatório)
+      - url (str): URL do projeto (deve começar com http, obrigatório)
+
+    Respostas:
+      200: Projeto criado com sucesso.
+      400: Dados inválidos ou projeto já existe.
+      500: Erro interno do servidor.
+    """
     if not body.name or not body.url:
         return {"error": "Nome e URL são obrigatórios."}, 400
     if len(body.name) < 3:
@@ -68,7 +94,20 @@ def create_project(body: ProjectCreateSchema):
 
 @app.patch('/project/<int:project_id>', tags=[project_tag])
 def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
-    """Update a project's name and url by ID."""
+    """Atualiza o nome e a URL de um projeto pelo ID.
+
+    Parâmetros:
+      - project_id (int): ID do projeto.
+    Corpo da requisição:
+      - name (str): Novo nome do projeto (mínimo 3 caracteres, obrigatório)
+      - url (str): Nova URL do projeto (deve começar com http, obrigatório)
+
+    Respostas:
+      200: Projeto atualizado com sucesso.
+      400: Dados inválidos ou projeto já existe.
+      404: Projeto não encontrado.
+      500: Erro interno do servidor.
+    """
     if not body.name or not body.url:
         return {"error": "Nome e URL são obrigatórios."}, 400
     if len(body.name) < 3:
@@ -90,7 +129,16 @@ def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
 
 @app.delete('/project/<int:project_id>', tags=[project_tag])
 def delete_project(path: ProjectPathSchema):
-    """Delete a project by ID."""
+    """Remove um projeto pelo ID.
+
+    Parâmetros:
+      - project_id (int): ID do projeto.
+
+    Respostas:
+      200: Projeto removido com sucesso.
+      404: Projeto não encontrado.
+      500: Erro interno do servidor.
+    """
     try:
         project = Project.query.get_or_404(path.project_id)
         db.session.delete(project)
