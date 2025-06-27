@@ -9,8 +9,8 @@ API para o Webring Nós no Cabo.
 
 1. **Crie um ambiente virtual (recomendado):**
    ```bash
-   pyenv virtualenv 3.10 my_api_env
-   pyenv local my_api_env
+   pyenv virtualenv 3.10 nos-no-cabo
+   pyenv local nos-no-cabo
    ```
 
 2. **Instale as dependências:**
@@ -48,6 +48,16 @@ Após iniciar o servidor, acesse:
 
 ## CORS
 CORS está habilitado para todas as origens por padrão.
+
+## Testes
+
+Para rodar os testes automatizados:
+
+```bash
+python test_app.py
+```
+
+Os testes cobrem as operações básicas de criação, listagem, atualização, remoção e validação de projetos.
 
 ## Observações
 - Na primeira execução, as tabelas do banco de dados são criadas automaticamente.
