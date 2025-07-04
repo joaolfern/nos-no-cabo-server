@@ -24,7 +24,6 @@ class ProjectApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_get_projects(self):
-        # Add a project first
         with app.app_context():
             db.session.add(Project(name="Teste", url="http://teste.com"))
             db.session.commit()
