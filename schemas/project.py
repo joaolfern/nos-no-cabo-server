@@ -2,16 +2,16 @@ from pydantic import BaseModel, HttpUrl, validator
 
 class ProjectSchema(BaseModel):
     """Project representation with id, name, and url."""
-    id: int
-    name: str
-    url: str
+    id: int = 1
+    name: str = "Nome do Projeto"
+    url: str = "https://example.com"
 
     class Config:
         orm_mode = True
 
 class ProjectCreateSchema(BaseModel):
-    name: str
-    url: HttpUrl
+    name: str = "Nome do Projeto"
+    url: HttpUrl = "https://example.com"
 
     @validator('name')
     def name_must_be_valid(cls, v):

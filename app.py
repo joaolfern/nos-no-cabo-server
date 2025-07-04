@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from flask import redirect
 from schemas.message  import MessageSchema
 from schemas.project import ProjectSchema, ProjectCreateSchema, ProjectPathSchema
+from schemas.error import ErrorSchema
 
 info = Info(title="Nós no Cabo", description="API para O Webring brasileiro para divulgação projetos independentes em tecnologia.", version="1.0.0")
 app = OpenAPI(__name__, info=info)
@@ -25,15 +26,12 @@ def home():
     return redirect('/openapi')
 
 
-@app.get('/project', tags=[project_tag])
+@app.get('/project', tags=[project_tag],
+         responses={"200": ProjectSchema, "500": ErrorSchema})
 def get_projects():
     """Lista todos os projetos cadastrados.
 
     Retorna uma lista de projetos.
-
-    Respostas:
-      200: Lista de projetos retornada com sucesso.
-      500: Erro interno do servidor.
     """
     try:
         projects = Project.query.all()
@@ -41,17 +39,13 @@ def get_projects():
     except Exception as e:
         return {"error": str(e)}, 500
 
-@app.get('/project/<int:project_id>', tags=[project_tag])
+@app.get('/project/<int:project_id>', tags=[project_tag],
+         responses={"200": ProjectSchema, "404": ErrorSchema, "500": ErrorSchema})
 def get_project(path: ProjectPathSchema):
     """Busca um projeto específico pelo ID.
 
     Parâmetros:
       - project_id (int): ID do projeto.
-
-    Respostas:
-      200: Projeto encontrado e retornado com sucesso.
-      404: Projeto não encontrado.
-      500: Erro interno do servidor.
     """
     try:
         project = Project.query.get_or_404(path.project_id)
@@ -59,20 +53,14 @@ def get_project(path: ProjectPathSchema):
     except Exception as e:
         return {"error": str(e)}, 500
 
-@app.post('/project',
-    tags=[project_tag]
-)
+@app.post('/project', tags=[project_tag],
+          responses={"200": MessageSchema, "400": ErrorSchema, "500": ErrorSchema})
 def create_project(body: ProjectCreateSchema):
     """Cria um novo projeto.
 
     Corpo da requisição:
       - name (str): Nome do projeto (mínimo 3 caracteres, obrigatório)
       - url (str): URL do projeto (deve começar com http, obrigatório)
-
-    Respostas:
-      200: Projeto criado com sucesso.
-      400: Dados inválidos ou projeto já existe.
-      500: Erro interno do servidor.
     """
     try:
         new_project = Project(name=body.name, url=body.url)
@@ -86,7 +74,8 @@ def create_project(body: ProjectCreateSchema):
         db.session.rollback()
         return {"error": str(e)}, 500
 
-@app.patch('/project/<int:project_id>', tags=[project_tag])
+@app.patch('/project/<int:project_id>', tags=[project_tag],
+           responses={"200": MessageSchema, "400": ErrorSchema, "404": ErrorSchema, "500": ErrorSchema})
 def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
     """Atualiza o nome e a URL de um projeto pelo ID.
 
@@ -95,12 +84,6 @@ def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
     Corpo da requisição:
       - name (str): Novo nome do projeto (mínimo 3 caracteres, obrigatório)
       - url (str): Nova URL do projeto (deve começar com http, obrigatório)
-
-    Respostas:
-      200: Projeto atualizado com sucesso.
-      400: Dados inválidos ou projeto já existe.
-      404: Projeto não encontrado.
-      500: Erro interno do servidor.
     """
     try:
         project = Project.query.get_or_404(path.project_id)
@@ -115,17 +98,13 @@ def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
         db.session.rollback()
         return {"error": str(e)}, 500
 
-@app.delete('/project/<int:project_id>', tags=[project_tag])
+@app.delete('/project/<int:project_id>', tags=[project_tag],
+            responses={"200": MessageSchema, "404": ErrorSchema, "500": ErrorSchema})
 def delete_project(path: ProjectPathSchema):
     """Remove um projeto pelo ID.
 
     Parâmetros:
       - project_id (int): ID do projeto.
-
-    Respostas:
-      200: Projeto removido com sucesso.
-      404: Projeto não encontrado.
-      500: Erro interno do servidor.
     """
     try:
         project = Project.query.get_or_404(path.project_id)
