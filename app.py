@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, make_response
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask_cors import CORS
 from models.database import init_db, db
@@ -8,6 +8,10 @@ from flask import redirect
 from schemas.message  import MessageSchema
 from schemas.project import ProjectSchema, ProjectCreateSchema, ProjectPathSchema
 from schemas.error import ErrorSchema
+import os   
+from functools import wraps
+from dotenv import load_dotenv
+load_dotenv()
 
 info = Info(title="Nós no Cabo", description="API para O Webring brasileiro para divulgação projetos independentes em tecnologia.", version="1.0.0")
 app = OpenAPI(__name__, info=info)
@@ -25,6 +29,45 @@ def home():
     """
     return redirect('/openapi')
 
+
+def check_auth(username, password):
+    return username == os.environ.get('API_USER') and password == os.environ.get('API_PASS')
+
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth_cookie = request.cookies.get('auth')
+        if not auth_cookie:
+            return jsonify({'error': 'Unauthorized'}), 401
+        import base64
+        try:
+            decoded = base64.b64decode(auth_cookie).decode()
+            username, password = decoded.split(':', 1)
+        except Exception:
+            return jsonify({'error': 'Unauthorized'}), 401
+        if not check_auth(username, password):
+            return jsonify({'error': 'Unauthorized'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+@app.post('/login')
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    if check_auth(username, password):
+        import base64
+        cookie_val = base64.b64encode(f"{username}:{password}".encode()).decode()
+        resp = make_response({'message': 'Login successful'}, 200)
+        resp.set_cookie('auth', cookie_val, httponly=True, samesite='Strict')
+        return resp
+    return {'error': 'Unauthorized'}, 401
+
+@app.post('/logout')
+def logout():
+    resp = make_response({'message': 'Logout successful'}, 200)
+    resp.set_cookie('auth', '', expires=0, httponly=True, samesite='Strict')
+    return resp
 
 @app.get('/project', tags=[project_tag],
          responses={"200": ProjectSchema, "500": ErrorSchema})
@@ -100,6 +143,7 @@ def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
 
 @app.delete('/project/<int:project_id>', tags=[project_tag],
             responses={"200": MessageSchema, "404": ErrorSchema, "500": ErrorSchema})
+@require_auth
 def delete_project(path: ProjectPathSchema):
     """Remove um projeto pelo ID.
 
