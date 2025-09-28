@@ -6,6 +6,7 @@
     "createdAt": "2025-01-01T00:00:00Z",
     "updatedAt": "2025-01-01T00:00:00Z",
     "faviconUrl": "https://i.imgur.com/ZE3h2Qm.png",
-    "description": "Webring dedicado a conectar e dar visibilidade a projetos de tecnologia independentes. Nosso objetivo é promover a troca de conhecimento técnico e experiências dentro da comunidade de desenvolvedores."
+    "description": "Webring dedicado a conectar e dar visibilidade a projetos de tecnologia independentes. Nosso objetivo é promover a troca de conhecimento técnico e experiências dentro da comunidade de desenvolvedores.",
+    "repo": "https://github.com/joaolfern/nos-no-cabo-client"
   }
 ]

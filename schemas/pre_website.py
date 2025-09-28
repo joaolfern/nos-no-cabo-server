@@ -27,6 +27,7 @@ class PreWebsiteResponseSchema(PreWebsiteSchema):
     color: str | None = ''
     createdAt: str | None = ''
     faviconUrl: str | None = ''
+    repo: str | None = None
 
     class Config:
         orm_mode = True

@@ -246,6 +246,9 @@ def update_website(body: PreWebsiteUpdateSchema, header: AdminHeaderSchema):
                 website.color = body.color
             if body.faviconUrl is not None:
                 website.faviconUrl = body.faviconUrl
+            if body.repo is not None:
+                website.repo = body.repo
+
             db.session.commit()
             return MessageSchema(message="Site existente atualizado com sucesso").dict()
 
@@ -262,6 +265,8 @@ def update_website(body: PreWebsiteUpdateSchema, header: AdminHeaderSchema):
             pre_website.color = body.color
         if body.faviconUrl:
             pre_website.faviconUrl = body.faviconUrl
+        if body.repo:
+            pre_website.repo = body.repo
 
         pre_website.createdAt = datetime.utcnow().isoformat()
 

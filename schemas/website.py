@@ -13,6 +13,7 @@ class WebsiteSchema(BaseModel):
     updatedAt: str
     faviconUrl: str = ''
     keywords: list[KeywordSchema] = []
+    repo: str | None = None
 
     @validator('url')
     def url_must_be_valid(cls, v):
@@ -34,6 +35,7 @@ class WebsiteCreateSchema(BaseModel):
     createdAt: str
     updatedAt: str
     faviconUrl: str = ''
+    repo: str | None = None
 
     @validator('name')
     def name_must_be_valid(cls, v):

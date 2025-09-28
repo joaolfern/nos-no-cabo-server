@@ -15,16 +15,17 @@ class Website(db.Model, WebsiteBase):
     name = db.Column(db.String(300), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
     updatedAt = db.Column(db.String(50), nullable=False)
+    repo = db.Column(db.String(400), nullable=True)
     keywords = db.relationship('Keyword', secondary=website_keyword, backref='websites')
 
     @classmethod
     def from_prewebsite(cls, prewebsite):
         if not prewebsite.name:
-            raise ValueError("PreWebsite.name is required for Website")
+            raise ValueError("Nome é obrigatório")
         if not prewebsite.url:
-            raise ValueError("PreWebsite.url is required for Website")
+            raise ValueError("URL é obrigatória")
         if not prewebsite.createdAt:
-            raise ValueError("PreWebsite.createdAt is required for Website")
+            raise ValueError("Data de criação é obrigatória")
         return cls(
             name=prewebsite.name,
             url=prewebsite.url,
