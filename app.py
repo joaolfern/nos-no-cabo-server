@@ -190,7 +190,7 @@ def pre_register_website(body: PreWebsiteSchema):
         website = Website.query.filter_by(url=url).first()
 
         if website is not None:
-            return {"error": "Website with this URL already exists."}, 400
+            return {"error": "Esse site já existe no sistema, realize a deleção antes de fazer um novo pré-cadastro."}, 400
 
         pre_website = PreWebsite.query.filter_by(url=url).first()
 
@@ -217,45 +217,23 @@ def pre_register_website(body: PreWebsiteSchema):
             return PreWebsiteResponseSchema.from_orm(pre_website).dict()
     except IntegrityError:
         db.session.rollback()
-        return {"error": "Website with this URL already exists."}, 400
+        return {"error": "Esse site já existe no sistema, realize a deleção antes de fazer um novo pré-cadastro"}, 400
     except Exception as e:
         db.session.rollback()
         return {"error": str(e)}, 500
 
 @app.patch('/website', tags=[website_tag],
     responses={"200": MessageSchema, "400": ErrorSchema, "500": ErrorSchema})
-def update_website(body: PreWebsiteUpdateSchema, header: AdminHeaderSchema):
+def update_website(body: PreWebsiteUpdateSchema):
     """Registra website ou atualiza seus dados.
     """
     try:
         website = Website.query.filter_by(url=body.url).first()
 
-        if website is not None:
-            admin_password = get_admin_password(header)
-
-            if admin_password is None:
-                return ErrorSchema(error="Admin password is required to update an existing website").dict(), 400
-
-            validate_admin_password(admin_password)
-
-            if body.name is not None:
-                website.name = body.name
-            if body.description is not None:
-                website.description = body.description
-            if body.color is not None:
-                website.color = body.color
-            if body.faviconUrl is not None:
-                website.faviconUrl = body.faviconUrl
-            if body.repo is not None:
-                website.repo = body.repo
-
-            db.session.commit()
-            return MessageSchema(message="Site existente atualizado com sucesso").dict()
-
         pre_website = PreWebsite.query.filter_by(url=body.url).first()
 
         if pre_website is None:
-            return {"error": "PreWebsite with this URL not found."}, 404
+            return {"error": "Não existe pré-cadastro para essa URL"}, 404
 
         if body.name:
             pre_website.name = body.name
@@ -307,7 +285,7 @@ def delete_website(path: WebsitePathSchema, header: AdminHeaderSchema):
 
         website = Website.query.get(path.website_id)
         if website is None:
-            return {"error": "Website not found"}, 404
+            return {"error": "Site não encontrado"}, 404
 
         print(f"Deleting website: {website.name} with keywords {[kw.name for kw in website.keywords]}")
         for keyword in website.keywords:
