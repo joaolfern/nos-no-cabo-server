@@ -7,7 +7,7 @@ class PreWebsiteSchema(BaseModel):
   class Config:
     schema_extra = {
         "example": {
-            "url": "https://google.com"
+            "url": "https://martinfowler.com",
         }
     }
 
@@ -25,7 +25,7 @@ class PreWebsiteResponseSchema(PreWebsiteSchema):
     name: str | None = ''
     description: str | None = ''
     color: str | None = ''
-    createdAt: str
+    createdAt: str | None = ''
     faviconUrl: str | None = ''
 
     class Config:
@@ -42,17 +42,13 @@ class PreWebsiteResponseSchema(PreWebsiteSchema):
             }
         }
 
+
 class PreWebsiteUpdateSchema(PreWebsiteResponseSchema):
     keywords: list[str] = []
     class Config:
         schema_extra = {
             "example": {
-                "name": "Google",
-                "url": "https://google.com",
-                "description": "A popular search engine.",
-                "color": "#2E43FF",
-                "faviconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1920px-Google_2015_logo.svg.png",
-                "keywords": ["search", "engine", "google"],
-                "createdAt": "2024-01-01T00:00:00Z"
+               "url": "https://martinfowler.com",
+               "keywords": ["software engineering", "refactoring"]
             }
         }
