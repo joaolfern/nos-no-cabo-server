@@ -2,7 +2,7 @@
 API para o Webring Nós no Cabo.
 
 ## Requisitos
-- Python 3.10+
+- Python > 3.10 && <= 3.12
 - pip
 
 ## Instalação e execução da aplicação
@@ -31,19 +31,16 @@ O servidor será iniciado em `http://localhost:3000`.
 Após iniciar o servidor, acesse:
 - [http://localhost:3000/openapi](http://localhost:3000/openapi) para a documentação interativa da API (Swagger, Redoc, RapiDoc)
 
-## Estrutura do Projeto
+### 📊 Arquitetura da Aplicação
 
-- `app.py` — Arquivo principal da aplicação
-- `models/` — Modelos SQLAlchemy
-- `schemas/` — Schemas Pydantic
-- `requirements.txt` — Dependências Python
+<img width="762" height="372" alt="Frame 30@2x" src="https://github.com/user-attachments/assets/c6e3910c-11a3-402f-983e-46bb20d14f1f" />
 
-## Testes
+O diagram acima ilustra os principais módulos e integrações da aplicação.
 
-Para rodar os testes automatizados:
+---
 
-```bash
-python test_app.py
-```
 
-Os testes cobrem as operações básicas de criação, listagem, atualização, remoção e validação de projetos.
+
+### Front-end
+
+https://github.com/joaolfern/nos-no-cabo-client

@@ -20,7 +20,7 @@ from schemas.keyword import KeywordSchema
 from schemas.admin_header import AdminHeaderSchema
 from utils.validate_admin_password import validate_admin_password, get_admin_password
 
-info = Info(title="Nós no Cabo", description="API para O Webring brasileiro para divulgação projetos independentes em tecnologia.", version="1.0.0")
+info = Info(title="Nós no Cabo", description="API para o Webring brasileiro para divulgação projetos independentes em tecnologia.", version="2.0.0")
 app = OpenAPI(__name__, info=info)
 CORS(app)
 
