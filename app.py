@@ -1,13 +1,24 @@
+from datetime import datetime
 from flask import Flask, request, jsonify, abort
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask_cors import CORS
-from models.database import init_db, db
-from models.project import Project
 from sqlalchemy.exc import IntegrityError
 from flask import redirect
+import os
+from werkzeug.exceptions import HTTPException
+import requests
+from bs4 import BeautifulSoup
+from models.database import init_db, db
+from models.website import Website
+from models.keyword import Keyword
+from models.pre_website import PreWebsite
 from schemas.message  import MessageSchema
-from schemas.project import ProjectSchema, ProjectCreateSchema, ProjectPathSchema
+from schemas.website import WebsiteSchema, WebsitePathSchema
+from schemas.pre_website import PreWebsiteSchema, PreWebsiteResponseSchema
 from schemas.error import ErrorSchema
+from schemas.keyword import KeywordSchema
+from schemas.admin_header import AdminHeaderSchema
+from utils.validate_admin_password import validate_admin_password, get_admin_password
 
 info = Info(title="Nós no Cabo", description="API para O Webring brasileiro para divulgação projetos independentes em tecnologia.", version="1.0.0")
 app = OpenAPI(__name__, info=info)
@@ -15,8 +26,7 @@ CORS(app)
 
 init_db(app)
 
-user_tag = Tag(name="User", description="User management endpoints")
-project_tag = Tag(name="Project", description="Project management endpoints")
+website_tag = Tag(name="Website", description="Website related endpoints")
 
 home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
 @app.get('/', tags=[home_tag])
@@ -25,92 +35,263 @@ def home():
     """
     return redirect('/openapi')
 
+@app.get('/websites', tags=[website_tag],
+         responses={"200": WebsiteSchema, "500": ErrorSchema})
+def get_websites():
+    """Lista os sites cadastrados.
 
-@app.get('/project', tags=[project_tag],
-         responses={"200": ProjectSchema, "500": ErrorSchema})
-def get_projects():
-    """Lista todos os projetos cadastrados.
-
-    Retorna uma lista de projetos.
+    Retorna uma lista de websites.
     """
     try:
-        projects = Project.query.all()
-        return jsonify([ProjectSchema.from_orm(project).dict() for project in projects])
+        websites = Website.query.all()
+        return jsonify([WebsiteSchema.from_orm(website).dict() for website in websites])
     except Exception as e:
         return {"error": str(e)}, 500
 
-@app.get('/project/<int:project_id>', tags=[project_tag],
-         responses={"200": ProjectSchema, "404": ErrorSchema, "500": ErrorSchema})
-def get_project(path: ProjectPathSchema):
-    """Busca um projeto específico pelo ID.
-
-    Parâmetros:
-      - project_id (int): ID do projeto.
+@app.get('/website/<int:website_id>', tags=[website_tag],
+         responses={"200": WebsiteSchema, "404": ErrorSchema, "500": ErrorSchema})
+def get_website(path: WebsitePathSchema):
+    """Busca um site específico pelo ID.
     """
     try:
-        project = Project.query.get_or_404(path.project_id)
-        return ProjectSchema.from_orm(project).dict()
+        website = Website.query.get_or_404(path.website_id)
+        return WebsiteSchema.from_orm(website).dict()
     except Exception as e:
         return {"error": str(e)}, 500
 
-@app.post('/project', tags=[project_tag],
-          responses={"200": MessageSchema, "400": ErrorSchema, "500": ErrorSchema})
-def create_project(body: ProjectCreateSchema):
-    """Cria um novo projeto.
+@app.get('/keywords', tags=[website_tag],
+         responses={"200": KeywordSchema, "500": ErrorSchema})
+def get_keywords():
+    """Lista as keywords cadastradas.
 
-    Corpo da requisição:
-      - name (str): Nome do projeto (mínimo 3 caracteres, obrigatório)
-      - url (str): URL do projeto (deve começar com http, obrigatório)
+    Retorna uma lista de keywords.
     """
     try:
-        new_project = Project(name=body.name, url=body.url)
-        db.session.add(new_project)
-        db.session.commit()
-        return MessageSchema(message="Project created successfully").dict()
+        keywords = Keyword.query.all()
+        return jsonify([KeywordSchema.from_orm(keyword).dict() for keyword in keywords])
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+@app.post('/website', tags=[website_tag],
+          responses={"200": PreWebsiteResponseSchema, "400": ErrorSchema, "500": ErrorSchema})
+def pre_register_website(body: PreWebsiteSchema):
+    """Registra um site para validação e possível inclusão no webring.
+    Se já existe um PreWebsite com a mesma URL, atualiza os dados.
+    """
+    try:
+        url = body.url
+
+        try:
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+        except Exception as e:
+            return {"error": f"Failed to fetch URL: {e}"}, 400
+
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        isBeta = os.environ.get("IS_BETA") != "false"
+
+        if not isBeta:
+            webring_url = os.environ.get("WEBRING_URL")
+            found_webring = False
+            for a in soup.find_all('a', href=True):
+                if webring_url in a['href']:
+                    found_webring = True
+                    break
+            if not found_webring:
+                return {"error": "Website does not contain a valid link to the webring."}, 400
+
+        title = soup.title.string.strip() if soup.title and soup.title.string else None
+
+        description = None
+        desc_tag = soup.find('meta', attrs={'name': 'description'})
+        if not desc_tag or not desc_tag.get('content'):
+            desc_tag = soup.find('meta', attrs={'property': 'og:description'})
+        if not desc_tag or not desc_tag.get('content'):
+            desc_tag = soup.find('meta', attrs={'name': 'twitter:description'})
+        if desc_tag and desc_tag.get('content'):
+            description = desc_tag['content'].strip()
+
+        favicon_url = None
+        meta_icon = soup.find('meta', attrs={'property': 'og:image'})
+        if not meta_icon or not meta_icon.get('content'):
+            meta_icon = soup.find('meta', attrs={'name': 'twitter:image'})
+        if meta_icon and meta_icon.get('content'):
+            favicon_url = meta_icon['content']
+            if favicon_url and not favicon_url.startswith('http'):
+                from urllib.parse import urljoin
+                favicon_url = urljoin(url, favicon_url)
+
+        if not favicon_url:
+            for icon_tag in soup.find_all('link', rel=True):
+                rel = icon_tag.get('rel')
+                if rel and any('icon' in r for r in rel):
+                    favicon_url = icon_tag.get('href')
+                    if favicon_url and not favicon_url.startswith('http'):
+                        from urllib.parse import urljoin
+                        favicon_url = urljoin(url, favicon_url)
+                    break
+
+        color = None
+        color_tag = soup.find('meta', attrs={'name': 'theme-color'})
+        if color_tag and color_tag.get('content'):
+            color = color_tag['content'].strip()
+        if not color:
+            manifest_tag = soup.find('link', rel='manifest')
+            if manifest_tag and manifest_tag.get('href'):
+                manifest_url = manifest_tag['href']
+                if not manifest_url.startswith('http'):
+                    from urllib.parse import urljoin
+                    manifest_url = urljoin(url, manifest_url)
+                try:
+                    manifest_resp = requests.get(manifest_url, timeout=5)
+                    manifest_resp.raise_for_status()
+                    import json
+                    manifest_data = json.loads(manifest_resp.text)
+                    color = manifest_data.get('theme_color')
+                except Exception:
+                    pass
+        if not color:
+            custom_meta_names = ['primary-color', 'theme_color', 'color', 'og:theme-color']
+            for meta_name in custom_meta_names:
+                custom_tag = soup.find('meta', attrs={'name': meta_name})
+                if custom_tag and custom_tag.get('content'):
+                    color = custom_tag['content'].strip()
+                    break
+                custom_tag = soup.find('meta', attrs={'property': meta_name})
+                if custom_tag and custom_tag.get('content'):
+                    color = custom_tag['content'].strip()
+                    break
+        if not color:
+            for style_tag in soup.find_all('style'):
+                css = style_tag.string
+                if css:
+                    import re
+                    match = re.search(r'--primary-color\s*:\s*([^;]+);', css)
+                    if match:
+                        color = match.group(1).strip()
+                        break
+        if not color:
+            for tag in soup.head.find_all(True):
+                style = tag.get('style')
+                if style:
+                    import re
+                    match = re.search(r'color\s*:\s*([^;]+);', style)
+                    if match:
+                        color = match.group(1).strip()
+                        break
+
+        created_at = datetime.utcnow().isoformat()
+
+        print(f"Extracted metadata - Title: {title}, Description: {description}, Favicon: {favicon_url}, Color: {color}")
+
+        website = Website.query.filter_by(url=url).first()
+
+        if website is not None:
+            return {"error": "Website with this URL already exists."}, 400
+
+        pre_website = PreWebsite.query.filter_by(url=url).first()
+
+        if pre_website is not None:
+            pre_website.name = title
+            pre_website.description = description
+            pre_website.color = color
+            pre_website.faviconUrl = favicon_url
+            pre_website.createdAt = created_at
+            db.session.commit()
+            return PreWebsiteResponseSchema.from_orm(pre_website).dict()
+        else:
+            pre_website = PreWebsite(
+                url=url,
+                name=title,
+                description=description,
+                color=color,
+                faviconUrl=favicon_url,
+                createdAt=created_at,
+            )
+            db.session.add(pre_website)
+            db.session.commit()
+
+            return PreWebsiteResponseSchema.from_orm(pre_website).dict()
     except IntegrityError:
         db.session.rollback()
-        return {"error": "Project with this URL already exists."}, 400
+        return {"error": "Website with this URL already exists."}, 400
     except Exception as e:
         db.session.rollback()
         return {"error": str(e)}, 500
 
-@app.patch('/project/<int:project_id>', tags=[project_tag],
-           responses={"200": MessageSchema, "400": ErrorSchema, "404": ErrorSchema, "500": ErrorSchema})
-def update_project(path: ProjectPathSchema, body: ProjectCreateSchema):
-    """Atualiza o nome e a URL de um projeto pelo ID.
-
-    Parâmetros:
-      - project_id (int): ID do projeto.
-    Corpo da requisição:
-      - name (str): Novo nome do projeto (mínimo 3 caracteres, obrigatório)
-      - url (str): Nova URL do projeto (deve começar com http, obrigatório)
+@app.patch('/website', tags=[website_tag],
+    responses={"200": MessageSchema, "400": ErrorSchema, "500": ErrorSchema})
+def update_website(body: PreWebsiteResponseSchema, header: AdminHeaderSchema):
+    """Registra website ou atualiza seus dados.
     """
     try:
-        project = Project.query.get_or_404(path.project_id)
-        project.name = body.name
-        project.url = body.url
+        website = Website.query.filter_by(url=body.url).first()
+
+        print(website)
+
+        if website is not None:
+            admin_password = get_admin_password(header)
+
+            if admin_password is None:
+                return ErrorSchema(error="Admin password is required to update an existing website").dict(), 400
+
+            validate_admin_password(admin_password)
+
+            if body.name is not None:
+                website.name = body.name
+            if body.description is not None:
+                website.description = body.description
+            if body.color is not None:
+                website.color = body.color
+            if body.faviconUrl is not None:
+                website.faviconUrl = body.faviconUrl
+            db.session.commit()
+            return MessageSchema(message="Site existente atualizado com sucesso").dict()
+
+        pre_website = PreWebsite.query.filter_by(url=body.url).first()
+        if pre_website is None:
+            return {"error": "PreWebsite with this URL not found."}, 404
+
+        if body.name is not None:
+            pre_website.name = body.name
+        if body.description is not None:
+            pre_website.description = body.description
+        if body.color is not None:
+            pre_website.color = body.color
+        if body.faviconUrl is not None:
+            pre_website.faviconUrl = body.faviconUrl
+
+        pre_website.createdAt = datetime.utcnow().isoformat()
+
+        website = Website.from_prewebsite(pre_website)
+
+        db.session.add(website)
+        db.session.delete(pre_website)
         db.session.commit()
-        return MessageSchema(message="Project updated successfully").dict()
-    except IntegrityError:
-        db.session.rollback()
-        return {"error": "Project with this URL already exists."}, 400
+
+        return MessageSchema(message="Novo site adicionado ao Webring com sucesso").dict()
     except Exception as e:
         db.session.rollback()
         return {"error": str(e)}, 500
 
-@app.delete('/project/<int:project_id>', tags=[project_tag],
+@app.delete('/website/<int:website_id>', tags=[website_tag],
             responses={"200": MessageSchema, "404": ErrorSchema, "500": ErrorSchema})
-def delete_project(path: ProjectPathSchema):
-    """Remove um projeto pelo ID.
-
-    Parâmetros:
-      - project_id (int): ID do projeto.
+def delete_website(path: WebsitePathSchema, header: AdminHeaderSchema):
+    """Remove o site ou registra uma denuncia contra o site pelo ID.
     """
     try:
-        project = Project.query.get_or_404(path.project_id)
-        db.session.delete(project)
+        admin_password = get_admin_password(header)
+        validate_admin_password(admin_password)
+
+        website = Website.query.get(path.website_id)
+        if website is None:
+            return {"error": "Website not found"}, 404
+        db.session.delete(website)
         db.session.commit()
-        return MessageSchema(message="Project deleted successfully").dict()
+        return MessageSchema(message="Website deleted successfully").dict()
+    except HTTPException as http_exc:
+        raise http_exc
     except Exception as e:
         db.session.rollback()
         return {"error": str(e)}, 500
@@ -120,3 +301,4 @@ if __name__ == "__main__":
         db.create_all()
 
     app.run(host="0.0.0.0", port=3000)
+

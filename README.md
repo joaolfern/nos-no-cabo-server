@@ -5,24 +5,26 @@ API para o Webring Nós no Cabo.
 - Python 3.10+
 - pip
 
-## Instalação
+## Instalação e execução da aplicação
 
-1. **Crie um ambiente virtual (recomendado):**
-   ```bash
-   pyenv virtualenv 3.10 nos-no-cabo
-   pyenv local nos-no-cabo
-   ```
+1. **Defina uma senha de administrador** (Opcional)
+Esse passo é necessário para ter acesso às operações de administrador do sistema.
+Crie um arquivo chamado `.env` na raiz do projeto e adicione a linha abaixo:
 
-2. **Instale as dependências:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+```
+ADMIN_PASSWORD=sua_senha_aqui
+```
 
-3. **Execute a aplicação:**
-   ```bash
-   python app.py
-   ```
-   O servidor será iniciado em `http://localhost:3000`.
+Esse mesmo valor também deve ser definido na env do front-end (`VITE_ADMIN_PASSWORD`),
+
+2. **Execute a aplicação com Docker Compose:**
+
+```bash
+docker-compose up --build
+```
+
+O servidor será iniciado em `http://localhost:3000`.
+
 
 ## Documentação da API
 
@@ -36,19 +38,6 @@ Após iniciar o servidor, acesse:
 - `schemas/` — Schemas Pydantic
 - `requirements.txt` — Dependências Python
 
-## Banco de Dados
-- Utiliza SQLite por padrão (o arquivo `database.db` será criado automaticamente).
-
-## Endpoints
-- `GET /project` — Lista todos os projetos
-- `GET /project/<project_id>` — Obtém um projeto pelo ID
-- `POST /project` — Cria um novo projeto
-- `PATCH /project/<project_id>` — Atualiza um projeto
-- `DELETE /project/<project_id>` — Remove um projeto
-
-## CORS
-CORS está habilitado para todas as origens por padrão.
-
 ## Testes
 
 Para rodar os testes automatizados:
@@ -58,11 +47,3 @@ python test_app.py
 ```
 
 Os testes cobrem as operações básicas de criação, listagem, atualização, remoção e validação de projetos.
-
-## Observações
-- Na primeira execução, as tabelas do banco de dados são criadas automaticamente.
-- Em desenvolvimento, o servidor roda com `debug=True`.
-
----
-
-Sinta-se à vontade para abrir issues ou contribuir!
