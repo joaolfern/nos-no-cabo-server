@@ -48,6 +48,7 @@ def init_db(app):
                         createdAt=datetime.utcnow(),
                         updatedAt=datetime.utcnow(),
                         faviconUrl=proj['faviconUrl'],
+                        repo=proj['repo']
                     )
                     db.session.add(p)
                 db.session.commit()
