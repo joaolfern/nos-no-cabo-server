@@ -1,6 +1,13 @@
+
 from models.database import db
 from models.WebsiteBase import WebsiteBase
 from datetime import datetime
+
+website_keyword = db.Table(
+    'website_keyword',
+    db.Column('website_id', db.Integer, db.ForeignKey('website.id'), primary_key=True),
+    db.Column('keyword_id', db.Integer, db.ForeignKey('keyword.id'), primary_key=True)
+)
 
 class Website(db.Model, WebsiteBase):
     __tablename__ = 'website'
@@ -8,6 +15,7 @@ class Website(db.Model, WebsiteBase):
     name = db.Column(db.String(300), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
     updatedAt = db.Column(db.String(50), nullable=False)
+    keywords = db.relationship('Keyword', secondary=website_keyword, backref='websites')
 
     @classmethod
     def from_prewebsite(cls, prewebsite):

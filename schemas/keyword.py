@@ -5,7 +5,6 @@ class KeywordSchema(BaseModel):
     id: int
     name: str
     createdAt: str
-    updatedAt: str
 
     class Config:
         orm_mode = True

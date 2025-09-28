@@ -14,7 +14,7 @@ from models.keyword import Keyword
 from models.pre_website import PreWebsite
 from schemas.message  import MessageSchema
 from schemas.website import WebsiteSchema, WebsitePathSchema
-from schemas.pre_website import PreWebsiteSchema, PreWebsiteResponseSchema
+from schemas.pre_website import PreWebsiteSchema, PreWebsiteResponseSchema, PreWebsiteUpdateSchema
 from schemas.error import ErrorSchema
 from schemas.keyword import KeywordSchema
 from schemas.admin_header import AdminHeaderSchema
@@ -88,7 +88,6 @@ def pre_register_website(body: PreWebsiteSchema):
             return {"error": f"Failed to fetch URL: {e}"}, 400
 
         soup = BeautifulSoup(resp.text, 'html.parser')
-
         isBeta = os.environ.get("IS_BETA") != "false"
 
         if not isBeta:
@@ -133,9 +132,6 @@ def pre_register_website(body: PreWebsiteSchema):
                     break
 
         color = None
-        color_tag = soup.find('meta', attrs={'name': 'theme-color'})
-        if color_tag and color_tag.get('content'):
-            color = color_tag['content'].strip()
         if not color:
             manifest_tag = soup.find('link', rel='manifest')
             if manifest_tag and manifest_tag.get('href'):
@@ -181,6 +177,12 @@ def pre_register_website(body: PreWebsiteSchema):
                         color = match.group(1).strip()
                         break
 
+        if not color:
+            color_tag = soup.find('meta', attrs={'name': 'theme-color'})
+
+            if color_tag and color_tag.get('content'):
+                color = color_tag['content'].strip()
+
         created_at = datetime.utcnow().isoformat()
 
         print(f"Extracted metadata - Title: {title}, Description: {description}, Favicon: {favicon_url}, Color: {color}")
@@ -222,13 +224,11 @@ def pre_register_website(body: PreWebsiteSchema):
 
 @app.patch('/website', tags=[website_tag],
     responses={"200": MessageSchema, "400": ErrorSchema, "500": ErrorSchema})
-def update_website(body: PreWebsiteResponseSchema, header: AdminHeaderSchema):
+def update_website(body: PreWebsiteUpdateSchema, header: AdminHeaderSchema):
     """Registra website ou atualiza seus dados.
     """
     try:
         website = Website.query.filter_by(url=body.url).first()
-
-        print(website)
 
         if website is not None:
             admin_password = get_admin_password(header)
@@ -250,21 +250,37 @@ def update_website(body: PreWebsiteResponseSchema, header: AdminHeaderSchema):
             return MessageSchema(message="Site existente atualizado com sucesso").dict()
 
         pre_website = PreWebsite.query.filter_by(url=body.url).first()
+
         if pre_website is None:
             return {"error": "PreWebsite with this URL not found."}, 404
 
-        if body.name is not None:
+        if body.name:
             pre_website.name = body.name
-        if body.description is not None:
+        if body.description:
             pre_website.description = body.description
-        if body.color is not None:
+        if body.color:
             pre_website.color = body.color
-        if body.faviconUrl is not None:
+        if body.faviconUrl:
             pre_website.faviconUrl = body.faviconUrl
 
         pre_website.createdAt = datetime.utcnow().isoformat()
 
         website = Website.from_prewebsite(pre_website)
+
+        existing_keywords = {k.name: k for k in Keyword.query.all()}
+        keywords_to_add = []
+
+        for kw_name in body.keywords:
+            keyword_obj = existing_keywords.get(kw_name)
+            if keyword_obj:
+                if keyword_obj not in website.keywords:
+                    website.keywords.append(keyword_obj)
+            else:
+                now = datetime.utcnow().isoformat()
+                new_keyword = Keyword(name=kw_name, createdAt=now, updatedAt=now)
+                db.session.add(new_keyword)
+                keywords_to_add.append(new_keyword)
+                website.keywords.append(new_keyword)
 
         db.session.add(website)
         db.session.delete(pre_website)
@@ -287,8 +303,19 @@ def delete_website(path: WebsitePathSchema, header: AdminHeaderSchema):
         website = Website.query.get(path.website_id)
         if website is None:
             return {"error": "Website not found"}, 404
+
+        print(f"Deleting website: {website.name} with keywords {[kw.name for kw in website.keywords]}")
+        for keyword in website.keywords:
+            connected_websites = keyword.websites
+            should_drop = len(connected_websites) == 1 and connected_websites[0].id == website.id
+            print(keyword.name, should_drop)
+
+            if should_drop:
+                db.session.delete(keyword)
+
         db.session.delete(website)
         db.session.commit()
+
         return MessageSchema(message="Website deleted successfully").dict()
     except HTTPException as http_exc:
         raise http_exc
