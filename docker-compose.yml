@@ -32,6 +32,7 @@ services:
       FLASK_ENV: development
       FLASK_DEBUG: 1
       PYTHONUNBUFFERED: 1
+      PYTHONPATH: /app:/app/app
       IS_BETA: 1
       WEBRING_URL: https://nosnocabo.pages.dev
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
@@ -39,6 +40,14 @@ services:
       - "3000:3000"
     volumes:
       - .:/app
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./app
+          target: /app/app
+          ignore:
+            - "**/__pycache__"
+            - "**/.pytest_cache"
 
 volumes:
   db_data:

@@ -35,7 +35,7 @@ def init_db(app):
         from models.website import Website
         if Website.query.count() == 0:
             import json
-            initial_path = os.path.join(os.path.dirname(__file__), '..', 'initial_websites.json')
+            initial_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'initial_websites.json')
             with open(initial_path, encoding='utf-8') as f:
                 Websites = json.load(f)
                 from datetime import datetime
