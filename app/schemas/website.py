@@ -2,6 +2,7 @@ from pydantic import BaseModel, validator
 from flask import abort, make_response, jsonify
 from schemas.error import ErrorSchema
 from schemas.keyword import KeywordSchema
+
 class WebsiteSchema(BaseModel):
     """Website representation with id, name, and url."""
     id: int
