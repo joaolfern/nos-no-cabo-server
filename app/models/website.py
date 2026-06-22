@@ -1,6 +1,6 @@
 
 from models.database import db
-from models.WebsiteBase import WebsiteBase
+from app.models.website_base import WebsiteBase
 from datetime import datetime
 
 website_keyword = db.Table(
