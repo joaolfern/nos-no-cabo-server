@@ -1,4 +1,5 @@
-from models.database import db
+from app.models.database import db
+
 
 class WebsiteBase():
     url = db.Column(db.String(600), nullable=False, unique=True)

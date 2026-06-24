@@ -1,7 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_utils import database_exists, create_database
-from sqlalchemy import create_engine
 import os
+
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy_utils import create_database, database_exists
 
 db = SQLAlchemy()
 
@@ -32,7 +33,7 @@ def init_db(app):
 
     with app.app_context():
         db.create_all()
-        from models.website import Website
+        from app.models.website import Website
         if Website.query.count() == 0:
             import json
             initial_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'initial_websites.json')

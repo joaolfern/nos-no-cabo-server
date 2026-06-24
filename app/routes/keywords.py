@@ -1,10 +1,10 @@
 from flask import jsonify
 from flask_openapi3 import APIBlueprint
 
-from schemas.keyword import KeywordSchema
-from schemas.error import ErrorSchema
-from models.keyword import Keyword
-from utils.tags import keyword_tag
+from app.lib.tags import keyword_tag
+from app.models.keyword import Keyword
+from app.schemas.error import ErrorSchema
+from app.schemas.keyword import KeywordSchema
 
 keywords_bp = APIBlueprint('keywords', __name__, url_prefix = '/keywords')
 
