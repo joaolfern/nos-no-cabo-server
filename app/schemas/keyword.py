@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class KeywordSchema(BaseModel):
     """Keyword representation with id, name, and url."""
     id: int

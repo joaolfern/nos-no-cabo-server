@@ -1,6 +1,8 @@
+from flask import abort, jsonify, make_response
 from pydantic import BaseModel, validator
-from flask import abort, make_response, jsonify
-from schemas.error import ErrorSchema
+
+from app.schemas.error import ErrorSchema
+
 
 class PreWebsiteSchema(BaseModel):
   url: str

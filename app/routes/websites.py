@@ -1,25 +1,28 @@
-from flask import jsonify
-from flask_openapi3 import APIBlueprint
+import os
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-import os
+from flask import jsonify
+from flask_openapi3 import APIBlueprint
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
 
-from schemas.message  import MessageSchema
-from schemas.website import WebsiteSchema, WebsitePathSchema
-from schemas.pre_website import PreWebsiteSchema, PreWebsiteResponseSchema, PreWebsiteUpdateSchema
-from schemas.error import ErrorSchema
-
-from models.keyword import Keyword
-from models.pre_website import PreWebsite
-from models.website import Website
-from models.database import db
-from schemas.admin_header import AdminHeaderSchema
-
-from utils.tags import websites_tag
-from utils.validate_admin_password import validate_admin_password, get_admin_password
+from app.lib.tags import websites_tag
+from app.lib.validate_admin_password import get_admin_password, validate_admin_password
+from app.models.database import db
+from app.models.keyword import Keyword
+from app.models.pre_website import PreWebsite
+from app.models.website import Website
+from app.schemas.admin_header import AdminHeaderSchema
+from app.schemas.error import ErrorSchema
+from app.schemas.message import MessageSchema
+from app.schemas.pre_website import (
+  PreWebsiteResponseSchema,
+  PreWebsiteSchema,
+  PreWebsiteUpdateSchema,
+)
+from app.schemas.website import WebsitePathSchema, WebsiteSchema
 
 websites_bp = APIBlueprint('websites', __name__, url_prefix = '/')
 
@@ -42,10 +45,10 @@ def get_website(path: WebsitePathSchema):
   try:
     website = Website.query.get_or_404(path.website_id)
     return WebsiteSchema.from_orm(website).dict()
-  
+
   except HTTPException as http_err:
     return {"error": http_err.description}, http_err.code
-  
+
   except Exception as e:
     return {"error": str(e)}, 500
 
@@ -233,7 +236,7 @@ def update_website(body: PreWebsiteUpdateSchema):
         if keyword_obj not in website.keywords:
           website.keywords.append(keyword_obj)
       else:
-        now = datetime.now(datetime.timezone.utc).isoformat()
+        now = datetime.utcnow().isoformat()
         new_keyword = Keyword(name=kw_name, createdAt=now, updatedAt=now)
         db.session.add(new_keyword)
         keywords_to_add.append(new_keyword)

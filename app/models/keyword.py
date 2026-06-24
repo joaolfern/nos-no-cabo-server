@@ -1,4 +1,5 @@
-from models.database import db
+from app.models.database import db
+
 
 class Keyword(db.Model):
   __tablename__ = 'keyword'

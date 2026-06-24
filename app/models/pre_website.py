@@ -1,5 +1,6 @@
-from models.database import db
-from models.website import WebsiteBase
+from app.models.database import db
+from app.models.website import WebsiteBase
+
 
 class PreWebsite(db.Model, WebsiteBase):
     __tablename__ = 'preWebsite'
