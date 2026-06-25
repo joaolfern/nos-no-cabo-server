@@ -4,7 +4,6 @@ from flask_openapi3 import APIBlueprint, Tag
 from sqlalchemy.exc import IntegrityError
 
 from app.models.database import db
-from app.models.URL_analytics import URLAnalytics
 from app.schemas.error import ErrorSchema
 from app.schemas.URL_analytics import URLAnalyticsSchema
 from app.schemas.URL_mapping import (
@@ -68,7 +67,7 @@ def handle_url_redirection(path: RedirectPathSchema):
 def listAnalytics():
   """Lista os registros de analytics."""
   try:
-    analytics = URLAnalytics.query.all()
+    analytics = shorten_service.get_all_analytics()
 
     return jsonify([URLAnalyticsSchema.from_orm(item).dict() for item in analytics])
   except Exception as e:

@@ -1,6 +1,6 @@
-from .database import db
-from .keyword import Keyword
-from .pre_website import PreWebsite
-from .URL_analytics import URLAnalytics
-from .URL_mapping import URLMapping
-from .website import Website
+from .database import db as db
+from .keyword import Keyword as Keyword
+from .pre_website import PreWebsite as PreWebsite
+from .URL_analytics import URLAnalytics as URLAnalytics
+from .URL_mapping import URLMapping as URLMapping
+from .website import Website as Website

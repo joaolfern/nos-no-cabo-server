@@ -20,12 +20,6 @@ def create_app():
     validation_error_callback=validation_error_handler
   )
 
-  from app.models.keyword import Keyword
-  from app.models.pre_website import PreWebsite
-  from app.models.URL_analytics import URLAnalytics
-  from app.models.URL_mapping import URLMapping
-  from app.models.website import Website
-
   CORS(app)
   init_db(app)
 
