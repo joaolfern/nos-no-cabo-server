@@ -85,5 +85,3 @@ node_modules/
 packages/*/dist/
 seed/seed.sql
 
-# Private moderation Worker: its own repo, mounted here as a submodule.
-services/moderation/
