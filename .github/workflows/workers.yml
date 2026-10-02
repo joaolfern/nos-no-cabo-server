@@ -1,0 +1,59 @@
+name: Workers
+
+on:
+  pull_request:
+    paths: ['packages/**', 'services/**', 'package.json', 'package-lock.json']
+  push:
+    branches: [main]
+    paths: ['packages/**', 'services/**', 'package.json', 'package-lock.json']
+    tags: ['contract-v*']
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  deploy-staging:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run deploy:staging -w @nosnocabo/catalog
+      - run: npm run deploy:staging -w @nosnocabo/gateway
+
+  publish-contract:
+    if: startsWith(github.ref, 'refs/tags/contract-v')
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@^11.5.1
+      - run: npm ci
+      # Trusted Publishing: npm accepts this workflow's OIDC identity, no token stored.
+      - run: npm publish -w @nosnocabo/contract

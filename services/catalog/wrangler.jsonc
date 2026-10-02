@@ -1,0 +1,37 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "nnc-catalog",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "observability": { "enabled": true },
+  // Private: only the gateway reaches it, through a service binding.
+  "workers_dev": false,
+  "preview_urls": false,
+  // TURNSTILE_SECRET and IP_HASH_SALT are secrets: .dev.vars locally, `wrangler secret put` remotely.
+  "vars": { "AUTO_PUBLISH": "true" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "nnc-catalog",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "env": {
+    "staging": {
+      "name": "nnc-catalog-staging",
+      "workers_dev": false,
+      "preview_urls": false,
+      // Until moderation exists (phase 8), staging publishes submissions right away.
+      "vars": { "AUTO_PUBLISH": "true" },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "nnc-catalog-staging",
+          "database_id": "47b0086b-34f2-4053-ad63-8c6c82b03f4b",
+          "migrations_dir": "migrations",
+        },
+      ],
+    },
+  },
+}

@@ -1,0 +1,3 @@
+# Copied to .dev.vars by `npm run dev`. Cloudflare's Turnstile test secret accepts any token.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+IP_HASH_SALT=local-only-salt
