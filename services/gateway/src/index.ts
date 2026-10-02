@@ -1,14 +1,8 @@
-import type { ApiErrorResponse } from '@nosnocabo/contract'
-import { ipKey } from '@nosnocabo/ip'
-import { Hono, type Context, type Next } from 'hono'
+import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
 type Env = {
   CATALOG: Fetcher
-  SUBMIT_LIMITER: RateLimit
-  PREVIEW_LIMITER: RateLimit
-  REPORT_LIMITER: RateLimit
-  READ_LIMITER: RateLimit
   ALLOWED_ORIGINS: string
 }
 
@@ -29,34 +23,6 @@ app.use('/v1/*', (c, next) =>
     maxAge: 86400,
   })(c, next)
 )
-
-const RATE_LIMITED: ApiErrorResponse = {
-  error: {
-    code: 'rate_limited',
-    message: 'Muitas tentativas. Espere um minuto e tente de novo.',
-  },
-}
-
-function limitPerIp(
-  limiter: keyof Pick<
-    Env,
-    'SUBMIT_LIMITER' | 'PREVIEW_LIMITER' | 'REPORT_LIMITER' | 'READ_LIMITER'
-  >
-) {
-  return async (c: Context<{ Bindings: Env }>, next: Next) => {
-    const key = ipKey(c.req.header('cf-connecting-ip') ?? '')
-    const { success } = await c.env[limiter].limit({ key })
-    if (success) return next()
-
-    return c.json(RATE_LIMITED, 429)
-  }
-}
-
-app.post('/v1/websites', limitPerIp('SUBMIT_LIMITER'))
-// The preview makes the Worker fetch any URL, so it is limited too.
-app.get('/v1/websites/preview', limitPerIp('PREVIEW_LIMITER'))
-app.post('/v1/websites/:id/reports', limitPerIp('REPORT_LIMITER'))
-app.get('/v1/*', limitPerIp('READ_LIMITER'))
 
 app.all('/v1/*', async (c) => {
   const response = await c.env.CATALOG.fetch(c.req.raw)

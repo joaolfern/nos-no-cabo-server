@@ -111,3 +111,37 @@ export async function flagForReview(
     .bind(flag, id)
     .run()
 }
+
+export async function deferModeration(
+  db: D1Database,
+  id: string,
+  now = Date.now()
+) {
+  await db
+    .prepare(
+      `INSERT OR IGNORE INTO moderation_backlog (website_id, deferred_at)
+       SELECT id, ? FROM websites WHERE id = ? AND status = 'checking'`
+    )
+    .bind(now, id)
+    .run()
+}
+
+export async function takeModerationBacklog(db: D1Database, limit: number) {
+  const { results } = await db
+    .prepare(
+      `DELETE FROM moderation_backlog WHERE website_id IN (
+         SELECT website_id FROM moderation_backlog
+         ORDER BY deferred_at, website_id LIMIT ?)
+       RETURNING website_id, deferred_at`
+    )
+    .bind(limit)
+    .all<{ website_id: string; deferred_at: number }>()
+
+  return results
+    .sort(
+      (a, b) =>
+        a.deferred_at - b.deferred_at ||
+        a.website_id.localeCompare(b.website_id)
+    )
+    .map(({ website_id }) => website_id)
+}

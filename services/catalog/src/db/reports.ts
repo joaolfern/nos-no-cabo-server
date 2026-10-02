@@ -7,34 +7,28 @@ export type NewReport = {
   reporterIpHash: string
 }
 
-// One report per IP per site: repeating it doesn't add to the count.
+// One report per network per site: repeats from the same network are merged.
 export async function addReport(db: D1Database, report: NewReport) {
-  const results = await db.batch<{ total: number }>([
-    db
-      .prepare(
-        `INSERT OR IGNORE INTO reports (website_id, reason, comment, reporter_ip_hash, created_at)
-         VALUES (?, ?, ?, ?, ?)`
-      )
-      .bind(
-        report.websiteId,
-        report.reason,
-        report.comment,
-        report.reporterIpHash,
-        Date.now()
-      ),
-    db
-      .prepare('SELECT COUNT(*) AS total FROM reports WHERE website_id = ?')
-      .bind(report.websiteId),
-  ])
-
-  return results[1]?.results[0]?.total ?? 0
-}
-
-export async function holdReported(db: D1Database, websiteId: string) {
   await db
     .prepare(
-      `UPDATE websites SET status = 'checking', review_flag = 'reported'
-       WHERE id = ? AND status = 'published'`
+      `INSERT OR IGNORE INTO reports (website_id, reason, comment, reporter_ip_hash, created_at)
+       VALUES (?, ?, ?, ?, ?)`
+    )
+    .bind(
+      report.websiteId,
+      report.reason,
+      report.comment,
+      report.reporterIpHash,
+      Date.now()
+    )
+    .run()
+}
+
+export async function flagReported(db: D1Database, websiteId: string) {
+  await db
+    .prepare(
+      `UPDATE websites SET review_flag = 'reported'
+       WHERE id = ? AND status = 'published' AND review_flag IS NULL`
     )
     .bind(websiteId)
     .run()

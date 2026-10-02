@@ -17,14 +17,13 @@ export function toAbsoluteUrl(input: string): string | null {
   }
 }
 
-// The dedupe key: scheme, www., case and trailing slashes don't make a different site.
+// The dedupe key: scheme, www., case, trailing slashes and the query string don't make a
+// different site; the path does.
 export function normalizeUrl(input: string): string | null {
   const absolute = toAbsoluteUrl(input)
   if (!absolute) return null
 
-  const { hostname, pathname, search } = new URL(absolute)
+  const { hostname, pathname } = new URL(absolute)
   const host = hostname.toLowerCase().replace(/^www\./, '')
-  const path = pathname.replace(/\/+$/, '')
-
-  return `${host}${path}${search}`
+  return `${host}${pathname.replace(/\/+$/, '')}`
 }

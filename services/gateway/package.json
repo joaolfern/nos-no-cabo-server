@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@nosnocabo/contract": "*",
-    "@nosnocabo/ip": "*",
     "hono": "^4.13.12"
   },
   "devDependencies": {

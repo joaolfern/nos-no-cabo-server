@@ -7,7 +7,7 @@ import {
 } from '@nosnocabo/contract'
 import { type Context, Hono } from 'hono'
 import { flagForReview } from '../db/moderation'
-import { addReport, holdReported } from '../db/reports'
+import { addReport, flagReported } from '../db/reports'
 import { getNeighbours } from '../db/ring'
 import {
   InvalidCursorError,
@@ -101,15 +101,13 @@ websites.post('/:id/reports', async (c) => {
     return apiError(c, 404, 'not_found', 'Site não encontrado.')
   }
 
-  const total = await addReport(c.env.DB, {
+  await addReport(c.env.DB, {
     websiteId,
     reason: report.data.reason,
     comment: report.data.comment || null,
     reporterIpHash: await hashIp(ip ?? 'unknown', c.env.IP_HASH_SALT),
   })
-  if (total >= Number(c.env.REPORT_HIDE_THRESHOLD)) {
-    await holdReported(c.env.DB, websiteId)
-  }
+  await flagReported(c.env.DB, websiteId)
 
   return c.body(null, 202)
 })
@@ -159,6 +157,7 @@ websites.post('/', async (c) => {
   if (existing) return duplicateError(c, existing.id)
 
   const now = Date.now()
+  const submitterIpHash = await hashIp(ip ?? 'unknown', c.env.IP_HASH_SALT)
   const id = ulid(now)
 
   await insertWebsite(c.env.DB, {
@@ -169,7 +168,7 @@ websites.post('/', async (c) => {
     status: 'checking',
     submittedAt: now,
     publishedAt: null,
-    submitterIpHash: await hashIp(ip ?? 'unknown', c.env.IP_HASH_SALT),
+    submitterIpHash,
   })
 
   try {
