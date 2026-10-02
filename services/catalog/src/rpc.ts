@@ -2,8 +2,11 @@ import { WorkerEntrypoint } from 'cloudflare:workers'
 import {
   type ModerationResult,
   applyModeration,
+  deferModeration,
   getForModeration,
+  takeModerationBacklog,
 } from './db/moderation'
+import { dailyQuotaUsed, takeDailyQuota } from './db/quota'
 import { getRing, getRingVersion } from './db/ring'
 import type { Env } from './env'
 
@@ -23,6 +26,22 @@ export class CatalogRpc extends WorkerEntrypoint<Env> {
 
   getRingVersion() {
     return getRingVersion(this.env.DB)
+  }
+
+  takeDailyQuota(name: string, limit: number) {
+    return takeDailyQuota(this.env.DB, name, limit)
+  }
+
+  dailyQuotaUsed(name: string) {
+    return dailyQuotaUsed(this.env.DB, name)
+  }
+
+  deferModeration(id: string) {
+    return deferModeration(this.env.DB, id)
+  }
+
+  takeModerationBacklog(limit: number) {
+    return takeModerationBacklog(this.env.DB, limit)
   }
 }
 

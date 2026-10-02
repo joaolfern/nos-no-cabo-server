@@ -122,6 +122,21 @@ describe('GET /v1/websites/:id and /status', () => {
   })
 })
 
+describe('duplicates', () => {
+  const send = (url: string) => submit({ ...SUBMISSION, url })
+  const errorOf = async (response: Response) =>
+    ((await response.json()) as ApiErrorResponse).error
+
+  it('treats addresses that differ only by query string as the same site', async () => {
+    expect((await send('consulta.dev/?a=1')).status).toBe(202)
+
+    const again = await send('consulta.dev/?a=2')
+    expect(again.status).toBe(409)
+    expect((await errorOf(again)).code).toBe('duplicate')
+    expect((await send('consulta.dev/outra')).status).toBe(202)
+  })
+})
+
 describe('GET /v1/websites', () => {
   async function seed() {
     const ids = {

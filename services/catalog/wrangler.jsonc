@@ -8,7 +8,6 @@
   "workers_dev": false,
   "preview_urls": false,
   // TURNSTILE_SECRET and IP_HASH_SALT are secrets: .dev.vars locally, `wrangler secret put` remotely.
-  "vars": { "REPORT_HIDE_THRESHOLD": "3" },
   "queues": {
     "producers": [
       { "binding": "MODERATION_QUEUE", "queue": "moderation-jobs" },
@@ -27,7 +26,6 @@
       "name": "nnc-catalog-staging",
       "workers_dev": false,
       "preview_urls": false,
-      "vars": { "REPORT_HIDE_THRESHOLD": "3" },
       "queues": {
         "producers": [
           { "binding": "MODERATION_QUEUE", "queue": "moderation-jobs-staging" },

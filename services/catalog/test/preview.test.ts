@@ -1,9 +1,6 @@
 import type { ApiErrorResponse, WebsitePreview } from '@nosnocabo/contract'
 import { describe, expect, it } from 'vitest'
-import { SUBMISSION, get, submit } from './api'
-
-const preview = (url: string) =>
-  get(`/websites/preview?url=${encodeURIComponent(url)}`)
+import { SUBMISSION, preview, submit } from './api'
 
 describe('GET /v1/websites/preview', () => {
   it('scrapes title, description, image and the manifest colour', async () => {
@@ -55,5 +52,10 @@ describe('GET /v1/websites/preview', () => {
     await submit(SUBMISSION)
     const duplicate = await preview('meu-projeto.dev')
     expect(duplicate.status).toBe(409)
+  })
+
+  it('needs no Turnstile token', async () => {
+    const response = await preview('projeto.dev')
+    expect(response.status).toBe(200)
   })
 })

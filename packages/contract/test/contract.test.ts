@@ -52,8 +52,9 @@ describe('url helpers', () => {
     expect(toAbsoluteUrl('exemplo.com')).toBe('https://exemplo.com/')
     expect(normalizeUrl('HTTPS://WWW.EXEMPLO.COM//')).toBe('exemplo.com')
     expect(normalizeUrl('https://exemplo.com/projeto/?id=2#topo')).toBe(
-      'exemplo.com/projeto?id=2'
+      'exemplo.com/projeto'
     )
+    expect(normalizeUrl('fit.com/a')).not.toBe(normalizeUrl('fit.com/b'))
     expect(normalizeUrl('localhost')).toBeNull()
   })
 })

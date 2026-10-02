@@ -75,20 +75,38 @@ describe('POST /v1/websites/:id/reports', () => {
     expect(site?.status).toBe('published')
   })
 
-  it('takes the site off the feed once enough people report it', async () => {
+  it('flags the site for review on the first report, keeping it published', async () => {
     const id = await publishedSite()
-    for (const ip of ['198.51.100.1', '198.51.100.2', '198.51.100.3']) {
-      await report(id, { reason: 'inappropriate' }, { ip })
-    }
+
+    await report(id, { reason: 'inappropriate' })
 
     const site = await env.DB.prepare(
       'SELECT status, review_flag FROM websites WHERE id = ?'
     )
       .bind(id)
       .first()
-    expect(site).toEqual({ status: 'checking', review_flag: 'reported' })
+    expect(site).toEqual({ status: 'published', review_flag: 'reported' })
 
     const page = (await (await get('/websites')).json()) as Page<Website>
-    expect(page.items.map((website) => website.id)).not.toContain(id)
+    expect(page.items.map((website) => website.id)).toContain(id)
+  })
+
+  it('never hides a site, however many people report it', async () => {
+    const id = await publishedSite()
+    for (const ip of [
+      '198.51.100.1',
+      '198.51.100.2',
+      '198.51.100.3',
+      '198.51.100.4',
+    ]) {
+      await report(id, { reason: 'spam' }, { ip })
+    }
+
+    const site = await env.DB.prepare(
+      'SELECT status FROM websites WHERE id = ?'
+    )
+      .bind(id)
+      .first<{ status: string }>()
+    expect(site?.status).toBe('published')
   })
 })
