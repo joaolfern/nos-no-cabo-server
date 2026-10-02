@@ -4,8 +4,10 @@ import type {
   Website,
   WebsiteStatusEntry,
 } from '@nosnocabo/contract'
+import { WebsiteListQuery } from '@nosnocabo/contract'
 import { env } from 'cloudflare:test'
 import { describe, expect, it } from 'vitest'
+import { listSql } from '../src/db/websites'
 import { SUBMISSION, get, submit } from './api'
 
 async function publish(id: string, fields: Record<string, number> = {}) {
@@ -158,12 +160,59 @@ describe('GET /v1/websites', () => {
     expect(await names('?q=%25')).toEqual([])
   })
 
-  it('ignores accents and case when searching', async () => {
+  it('matches word prefixes, ignoring accents and case', async () => {
     const id = await create('Querido Diário', 'diario.dev', ['cidades'])
     await publish(id)
 
-    expect(await names('?q=diario')).toEqual(['Querido Diário'])
-    expect(await names('?q=DIÁRIO')).toEqual(['Querido Diário'])
+    for (const q of ['diário', 'DIARIO', 'diár', 'querido dia']) {
+      expect(await names(`?q=${encodeURIComponent(q)}`)).toEqual([
+        'Querido Diário',
+      ])
+    }
+    expect(await names('?q=uerido')).toEqual([])
+  })
+
+  it('treats FTS syntax in the query as plain text', async () => {
+    await seed()
+    for (const q of [
+      '"',
+      '*',
+      'gam AND',
+      'NEAR(gam',
+      '-gam',
+      'name:gam',
+      '%',
+    ]) {
+      const response = await get(`/websites?q=${encodeURIComponent(q)}`)
+      expect(response.status).toBe(200)
+    }
+    expect(await names(`?q=${encodeURIComponent('"gam"')}`)).toEqual(['Gama'])
+  })
+
+  it('drives a search from its matches, not from every published site', async () => {
+    const statements = listSql(
+      WebsiteListQuery.parse({ q: 'gama', categoria: 'educacao' })
+    )
+    for (const { sql, params } of [statements!.page, statements!.total]) {
+      const { results } = await env.DB.prepare(`EXPLAIN QUERY PLAN ${sql}`)
+        .bind(...params)
+        .all<{ detail: string }>()
+      const plan = results.map(({ detail }) => detail).join('\n')
+
+      expect(plan).not.toMatch(/websites_by_\w+ \(status=\?\)/)
+      expect(plan).not.toMatch(/^SCAN w\b/m)
+    }
+  })
+
+  it('reports totals from stored counts, with or without filters', async () => {
+    await seed()
+    const total = async (query: string) =>
+      ((await (await get(`/websites${query}`)).json()) as Page<Website>).total
+
+    expect(await total('')).toBe(3)
+    expect(await total('?categoria=educacao')).toBe(2)
+    expect(await total('?categoria=educacao&q=gam')).toBe(1)
+    expect(await total('?q=%25')).toBe(0)
   })
 
   it('pages with a cursor and reports the total', async () => {

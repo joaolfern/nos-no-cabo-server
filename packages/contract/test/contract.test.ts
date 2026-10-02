@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ReportSubmission,
   WebsiteListQuery,
   WebsiteSubmission,
   normalizeUrl,
@@ -54,5 +55,24 @@ describe('url helpers', () => {
       'exemplo.com/projeto?id=2'
     )
     expect(normalizeUrl('localhost')).toBeNull()
+  })
+})
+
+describe('ReportSubmission', () => {
+  it('accepts a reason with an optional trimmed comment', () => {
+    expect(ReportSubmission.parse({ reason: 'spam' })).toEqual({
+      reason: 'spam',
+    })
+    expect(
+      ReportSubmission.parse({ reason: 'other', comment: '  link quebrado ' })
+    ).toEqual({ reason: 'other', comment: 'link quebrado' })
+  })
+
+  it('rejects unknown reasons and long comments', () => {
+    expect(ReportSubmission.safeParse({ reason: 'chato' }).success).toBe(false)
+    expect(
+      ReportSubmission.safeParse({ reason: 'other', comment: 'a'.repeat(501) })
+        .success
+    ).toBe(false)
   })
 })

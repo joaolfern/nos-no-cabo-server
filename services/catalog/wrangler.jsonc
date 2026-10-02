@@ -8,7 +8,12 @@
   "workers_dev": false,
   "preview_urls": false,
   // TURNSTILE_SECRET and IP_HASH_SALT are secrets: .dev.vars locally, `wrangler secret put` remotely.
-  "vars": { "AUTO_PUBLISH": "true" },
+  "vars": { "REPORT_HIDE_THRESHOLD": "3" },
+  "queues": {
+    "producers": [
+      { "binding": "MODERATION_QUEUE", "queue": "moderation-jobs" },
+    ],
+  },
   "d1_databases": [
     {
       "binding": "DB",
@@ -22,8 +27,12 @@
       "name": "nnc-catalog-staging",
       "workers_dev": false,
       "preview_urls": false,
-      // Until moderation exists (phase 8), staging publishes submissions right away.
-      "vars": { "AUTO_PUBLISH": "true" },
+      "vars": { "REPORT_HIDE_THRESHOLD": "3" },
+      "queues": {
+        "producers": [
+          { "binding": "MODERATION_QUEUE", "queue": "moderation-jobs-staging" },
+        ],
+      },
       "d1_databases": [
         {
           "binding": "DB",

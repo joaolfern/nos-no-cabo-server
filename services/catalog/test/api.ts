@@ -19,6 +19,22 @@ export function submit(body: unknown, token = PASSING_TURNSTILE_TOKEN) {
   })
 }
 
+export function report(
+  id: string,
+  body: unknown,
+  { ip = '198.51.100.1', token = PASSING_TURNSTILE_TOKEN } = {}
+) {
+  return exports.default.fetch(`${BASE}/websites/${id}/reports`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'cf-turnstile-response': token,
+      'cf-connecting-ip': ip,
+    },
+    body: JSON.stringify(body),
+  })
+}
+
 export const SUBMISSION = {
   url: 'https://www.Meu-Projeto.dev/',
   name: 'Meu projeto',

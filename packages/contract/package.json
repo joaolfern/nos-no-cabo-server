@@ -1,6 +1,6 @@
 {
   "name": "@nosnocabo/contract",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Schemas and types for the N\u00f3s no Cabo /v1 API, shared by the Workers and the web client.",
   "license": "MIT",
   "type": "module",

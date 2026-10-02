@@ -5,6 +5,7 @@ declare global {
   namespace Cloudflare {
     interface Env extends CatalogEnv {
       TEST_MIGRATIONS: D1Migration[]
+      TEST_REBUILD_SQL: string
     }
     interface GlobalProps {
       mainModule: typeof import('../src/index')
