@@ -24,12 +24,14 @@ export async function addReport(db: D1Database, report: NewReport) {
     .run()
 }
 
+// True only for the report that flagged the site; later ones wait for the owner's review.
 export async function flagReported(db: D1Database, websiteId: string) {
-  await db
+  const result = await db
     .prepare(
       `UPDATE websites SET review_flag = 'reported'
        WHERE id = ? AND status = 'published' AND review_flag IS NULL`
     )
     .bind(websiteId)
     .run()
+  return result.meta.changes > 0
 }

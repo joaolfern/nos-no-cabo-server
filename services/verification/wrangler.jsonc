@@ -1,0 +1,37 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "nnc-verification",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "observability": { "enabled": true },
+  // Private: the gateway forwards POST /v1/websites/:id/verify through a service binding.
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": { "HOME_HOSTS": "nosnocabo.pages.dev" },
+  "triggers": { "crons": ["17 * * * *"] },
+  "services": [
+    {
+      "binding": "CATALOG",
+      "service": "nnc-catalog",
+      "entrypoint": "CatalogRpc",
+    },
+  ],
+  "env": {
+    "staging": {
+      "name": "nnc-verification-staging",
+      "workers_dev": false,
+      "preview_urls": false,
+      "vars": {
+        "HOME_HOSTS": "nosnocabo.joaolfern.workers.dev,nosnocabo.pages.dev",
+      },
+      "triggers": { "crons": ["17 * * * *"] },
+      "services": [
+        {
+          "binding": "CATALOG",
+          "service": "nnc-catalog-staging",
+          "entrypoint": "CatalogRpc",
+        },
+      ],
+    },
+  },
+}

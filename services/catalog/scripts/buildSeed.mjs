@@ -13,6 +13,15 @@ function ulid(time) {
   return timePart + Array.from(random, (byte) => ALPHABET[byte % 32]).join('')
 }
 
+const SHORT_CODE_ALPHABET =
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
+// Same shape as src/lib/shortCode.ts: seeded sites skip moderation, which normally sets it.
+function shortCode() {
+  const bytes = crypto.getRandomValues(new Uint8Array(6))
+  return Array.from(bytes, (byte) => SHORT_CODE_ALPHABET[byte % 62]).join('')
+}
+
 const sql = (value) =>
   value === null || value === undefined
     ? 'NULL'
@@ -39,10 +48,11 @@ const statements = websites.flatMap((site) => {
     publishedAt,
     site.verified ? publishedAt : null,
     'seed',
+    shortCode(),
   ]
 
   return [
-    `INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash) VALUES (${columns.map((value) => (typeof value === 'number' ? value : sql(value))).join(', ')});`,
+    `INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES (${columns.map((value) => (typeof value === 'number' ? value : sql(value))).join(', ')});`,
     ...site.categories.map(
       (slug) =>
         `INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, ${sql(slug)} FROM websites WHERE url_normalized = ${sql(key)};`

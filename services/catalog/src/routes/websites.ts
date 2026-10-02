@@ -20,6 +20,7 @@ import {
 import type { AppContext } from '../env'
 import { NO_STORE, PUBLIC_LIST_CACHE } from '../lib/cache'
 import { apiError, duplicateError } from '../lib/errors'
+import { sendReportAlert } from '../lib/alerts'
 import { hashIp } from '../lib/ipHash'
 import { UnreachableError, scrapePreview } from '../lib/scrape'
 import { TURNSTILE_HEADER, verifyTurnstile } from '../lib/turnstile'
@@ -107,7 +108,15 @@ websites.post('/:id/reports', async (c) => {
     comment: report.data.comment || null,
     reporterIpHash: await hashIp(ip ?? 'unknown', c.env.IP_HASH_SALT),
   })
-  await flagReported(c.env.DB, websiteId)
+  if (await flagReported(c.env.DB, websiteId)) {
+    c.executionCtx.waitUntil(
+      sendReportAlert(c.env, {
+        website: { id: websiteId, name: website.name, url: website.url },
+        reason: report.data.reason,
+        comment: report.data.comment,
+      })
+    )
+  }
 
   return c.body(null, 202)
 })

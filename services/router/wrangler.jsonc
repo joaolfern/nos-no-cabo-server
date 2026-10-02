@@ -1,0 +1,33 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "nnc-router",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "observability": { "enabled": true },
+  // Public: widget ring links and short links point here (RING_BASE_URL in the client).
+  "workers_dev": true,
+  "preview_urls": false,
+  "vars": { "HOME_URL": "https://nosnocabo.pages.dev/" },
+  "services": [
+    {
+      "binding": "CATALOG",
+      "service": "nnc-catalog",
+      "entrypoint": "CatalogRpc",
+    },
+  ],
+  "env": {
+    "staging": {
+      "name": "nnc-router-staging",
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": { "HOME_URL": "https://nosnocabo.joaolfern.workers.dev/" },
+      "services": [
+        {
+          "binding": "CATALOG",
+          "service": "nnc-catalog-staging",
+          "entrypoint": "CatalogRpc",
+        },
+      ],
+    },
+  },
+}

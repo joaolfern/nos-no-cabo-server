@@ -20,7 +20,7 @@ export const RING_SQL = {
   maxRowid: 'SELECT COALESCE(max(rowid), 0) AS max FROM websites',
   random: `${FROM} WHERE ${PUBLISHED} AND w.id != ? AND w.rowid >= ? ORDER BY w.rowid LIMIT 1`,
   randomWrap: `${FROM} WHERE ${PUBLISHED} AND w.id != ? ORDER BY w.rowid LIMIT 1`,
-  ids: `SELECT w.id FROM websites w WHERE ${PUBLISHED} ORDER BY ${RING_ASC}`,
+  sites: `SELECT w.id, w.url, w.short_code FROM websites w WHERE ${PUBLISHED} ORDER BY ${RING_ASC}`,
   version: "SELECT value AS version FROM counters WHERE name = 'ring_version'",
 }
 
@@ -77,16 +77,28 @@ export async function getNeighbours(
   return { previous, next, random }
 }
 
-export async function getRing(db: D1Database) {
-  const [version, ids] = await db.batch<{ version: number } | { id: string }>([
-    db.prepare(RING_SQL.version),
-    db.prepare(RING_SQL.ids),
-  ])
+export type RingSite = { id: string; url: string; shortCode: string | null }
 
+export async function getRing(
+  db: D1Database
+): Promise<{ version: number; sites: RingSite[] }> {
+  const [version, sites] = await db.batch<
+    { version: number } | { id: string; url: string; short_code: string | null }
+  >([db.prepare(RING_SQL.version), db.prepare(RING_SQL.sites)])
+
+  const rows = (sites?.results ?? []) as {
+    id: string
+    url: string
+    short_code: string | null
+  }[]
   return {
     version:
       (version?.results[0] as { version: number } | undefined)?.version ?? 0,
-    ids: ((ids?.results ?? []) as { id: string }[]).map(({ id }) => id),
+    sites: rows.map(({ id, url, short_code }) => ({
+      id,
+      url,
+      shortCode: short_code,
+    })),
   }
 }
 

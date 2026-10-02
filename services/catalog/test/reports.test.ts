@@ -1,6 +1,7 @@
 import type { Page, Website } from '@nosnocabo/contract'
 import { env } from 'cloudflare:test'
 import { describe, expect, it } from 'vitest'
+import { flagReported } from '../src/db/reports'
 import { SUBMISSION, get, report, submit } from './api'
 
 async function publishedSite() {
@@ -108,5 +109,12 @@ describe('POST /v1/websites/:id/reports', () => {
       .bind(id)
       .first<{ status: string }>()
     expect(site?.status).toBe('published')
+  })
+
+  it('tells whether a report newly flagged the site', async () => {
+    const id = await publishedSite()
+
+    expect(await flagReported(env.DB, id)).toBe(true)
+    expect(await flagReported(env.DB, id)).toBe(false)
   })
 })

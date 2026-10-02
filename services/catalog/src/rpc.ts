@@ -8,6 +8,13 @@ import {
 } from './db/moderation'
 import { dailyQuotaUsed, takeDailyQuota } from './db/quota'
 import { getRing, getRingVersion } from './db/ring'
+import {
+  type VerificationKind,
+  claimVerificationCheck,
+  dueForRecheck,
+  getVerificationTarget,
+  recordVerification,
+} from './db/verification'
 import type { Env } from './env'
 
 // Reached only through service bindings; the gateway forwards nothing but /v1.
@@ -43,6 +50,24 @@ export class CatalogRpc extends WorkerEntrypoint<Env> {
   takeModerationBacklog(limit: number) {
     return takeModerationBacklog(this.env.DB, limit)
   }
+
+  getVerificationTarget(id: string) {
+    return getVerificationTarget(this.env.DB, id)
+  }
+
+  claimVerificationCheck(id: string) {
+    return claimVerificationCheck(this.env.DB, id)
+  }
+
+  recordVerification(id: string, found: boolean, kind: VerificationKind) {
+    return recordVerification(this.env.DB, id, found, kind)
+  }
+
+  dueForRecheck(limit: number) {
+    return dueForRecheck(this.env.DB, limit)
+  }
 }
 
 export type { ModerationResult, WebsiteForModeration } from './db/moderation'
+export type { RingSite } from './db/ring'
+export type { VerificationKind, VerificationTarget } from './db/verification'

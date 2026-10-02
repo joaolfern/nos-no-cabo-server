@@ -9,6 +9,11 @@ export default defineConfig({
         serviceBindings: {
           CATALOG: async (request: Request) =>
             Response.json({ path: new URL(request.url).pathname }),
+          VERIFICATION: async (request: Request) =>
+            Response.json({
+              worker: 'verification',
+              path: new URL(request.url).pathname,
+            }),
         },
       },
     }),

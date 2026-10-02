@@ -10,6 +10,19 @@ describe('gateway', () => {
     expect(await response.json()).toEqual({ path: '/v1/websites' })
   })
 
+  it('sends verification requests to the verification Worker', async () => {
+    const response = await call('/v1/websites/01SITE/verify', {
+      method: 'POST',
+    })
+    expect(await response.json()).toEqual({
+      worker: 'verification',
+      path: '/v1/websites/01SITE/verify',
+    })
+
+    const other = await call('/v1/websites/01SITE', { method: 'GET' })
+    expect(await other.json()).toEqual({ path: '/v1/websites/01SITE' })
+  })
+
   it('allows the web app origins, including Pages previews, and nothing else', async () => {
     const allowed = [
       'http://localhost:5173',

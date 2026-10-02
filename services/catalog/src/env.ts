@@ -1,6 +1,8 @@
 export type ModerationJob = { websiteId: string }
 
-export type Env = {
+import type { AlertEnv } from './lib/alerts'
+
+export type Env = AlertEnv & {
   DB: D1Database
   MODERATION_QUEUE: Queue<ModerationJob>
   TURNSTILE_SECRET: string
