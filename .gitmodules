@@ -1,0 +1,3 @@
+[submodule "services/moderation"]
+	path = services/moderation
+	url = git@github.com:joaolfern/-nos-no-cabo-moderation.git
