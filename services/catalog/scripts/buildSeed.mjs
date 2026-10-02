@@ -13,17 +13,6 @@ function ulid(time) {
   return timePart + Array.from(random, (byte) => ALPHABET[byte % 32]).join('')
 }
 
-// Same rule as src/lib/searchKey.ts.
-function toSearchKey(...parts) {
-  return parts
-    .join(' ')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
 const sql = (value) =>
   value === null || value === undefined
     ? 'NULL'
@@ -50,11 +39,10 @@ const statements = websites.flatMap((site) => {
     publishedAt,
     site.verified ? publishedAt : null,
     'seed',
-    toSearchKey(site.name, site.description),
   ]
 
   return [
-    `INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, search_key) VALUES (${columns.map((value) => (typeof value === 'number' ? value : sql(value))).join(', ')});`,
+    `INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash) VALUES (${columns.map((value) => (typeof value === 'number' ? value : sql(value))).join(', ')});`,
     ...site.categories.map(
       (slug) =>
         `INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, ${sql(slug)} FROM websites WHERE url_normalized = ${sql(key)};`

@@ -1,14 +1,17 @@
 import {
+  ReportSubmission,
   WebsiteListQuery,
   WebsiteSubmission,
   normalizeUrl,
   toAbsoluteUrl,
 } from '@nosnocabo/contract'
-import { Hono } from 'hono'
+import { type Context, Hono } from 'hono'
+import { flagForReview } from '../db/moderation'
+import { addReport, holdReported } from '../db/reports'
+import { getNeighbours } from '../db/ring'
 import {
   InvalidCursorError,
   findByNormalizedUrl,
-  getNeighbours,
   getStatuses,
   getWebsite,
   insertWebsite,
@@ -25,6 +28,15 @@ import { ulid } from '../lib/ulid'
 const MAX_STATUS_IDS = 50
 
 export const websites = new Hono<AppContext>()
+
+function turnstileError(c: Context) {
+  return apiError(
+    c,
+    400,
+    'turnstile_failed',
+    'Não conseguimos confirmar que você não é um robô.'
+  )
+}
 
 async function existingListing(db: D1Database, urlNormalized: string) {
   const existing = await findByNormalizedUrl(db, urlNormalized)
@@ -68,6 +80,40 @@ websites.get('/:id/neighbours', async (c) => {
   return c.json(neighbours)
 })
 
+websites.post('/:id/reports', async (c) => {
+  const body = await c.req.json().catch(() => null)
+  const report = ReportSubmission.safeParse(body)
+  if (!report.success) {
+    return apiError(c, 422, 'invalid', 'Escolha um motivo para a denúncia.')
+  }
+
+  const ip = c.req.header('cf-connecting-ip')
+  const isHuman = await verifyTurnstile(
+    c.env.TURNSTILE_SECRET,
+    c.req.header(TURNSTILE_HEADER),
+    ip
+  )
+  if (!isHuman) return turnstileError(c)
+
+  const websiteId = c.req.param('id')
+  const website = await getWebsite(c.env.DB, websiteId)
+  if (website?.status !== 'published') {
+    return apiError(c, 404, 'not_found', 'Site não encontrado.')
+  }
+
+  const total = await addReport(c.env.DB, {
+    websiteId,
+    reason: report.data.reason,
+    comment: report.data.comment || null,
+    reporterIpHash: await hashIp(ip ?? 'unknown', c.env.IP_HASH_SALT),
+  })
+  if (total >= Number(c.env.REPORT_HIDE_THRESHOLD)) {
+    await holdReported(c.env.DB, websiteId)
+  }
+
+  return c.body(null, 202)
+})
+
 websites.get('/:id', async (c) => {
   const website = await getWebsite(c.env.DB, c.req.param('id'))
   if (!website) return apiError(c, 404, 'not_found', 'Site não encontrado.')
@@ -105,14 +151,7 @@ websites.post('/', async (c) => {
     c.req.header(TURNSTILE_HEADER),
     ip
   )
-  if (!isHuman) {
-    return apiError(
-      c,
-      400,
-      'turnstile_failed',
-      'Não conseguimos confirmar que você não é um robô.'
-    )
-  }
+  if (!isHuman) return turnstileError(c)
 
   const url = toAbsoluteUrl(submission.data.url) as string
   const urlNormalized = normalizeUrl(url) as string
@@ -120,7 +159,6 @@ websites.post('/', async (c) => {
   if (existing) return duplicateError(c, existing.id)
 
   const now = Date.now()
-  const autoPublish = c.env.AUTO_PUBLISH === 'true'
   const id = ulid(now)
 
   await insertWebsite(c.env.DB, {
@@ -128,11 +166,18 @@ websites.post('/', async (c) => {
     id,
     url,
     urlNormalized,
-    status: autoPublish ? 'published' : 'checking',
+    status: 'checking',
     submittedAt: now,
-    publishedAt: autoPublish ? now : null,
+    publishedAt: null,
     submitterIpHash: await hashIp(ip ?? 'unknown', c.env.IP_HASH_SALT),
   })
+
+  try {
+    await c.env.MODERATION_QUEUE.send({ websiteId: id })
+  } catch (error) {
+    console.error(error)
+    await flagForReview(c.env.DB, id, 'model_error')
+  }
 
   return c.json(await getWebsite(c.env.DB, id), 202)
 })

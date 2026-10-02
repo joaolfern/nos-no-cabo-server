@@ -70,6 +70,48 @@ describe('gateway', () => {
     expect(statuses[20]).toBe(429)
   })
 
+  it('rate limits reports per IP', async () => {
+    const reportSite = () =>
+      call('/v1/websites/01ABC/reports', {
+        method: 'POST',
+        headers: { 'cf-connecting-ip': '198.51.100.11' },
+        body: '{}',
+      })
+
+    const statuses = []
+    for (let i = 0; i < 6; i++) statuses.push((await reportSite()).status)
+
+    expect(statuses.slice(0, 5)).toEqual([200, 200, 200, 200, 200])
+    expect(statuses[5]).toBe(429)
+  })
+
+  it('rate limits reads per IP', async () => {
+    const read = () =>
+      call('/v1/websites', { headers: { 'cf-connecting-ip': '198.51.100.12' } })
+
+    const responses = await Promise.all(Array.from({ length: 121 }, read))
+    const statuses = responses.map((response) => response.status)
+
+    expect(statuses.filter((status) => status === 200)).toHaveLength(120)
+    expect(statuses.filter((status) => status === 429)).toHaveLength(1)
+  })
+
+  it('counts every address of one IPv6 /64 as the same client', async () => {
+    const post = (host: number) =>
+      call('/v1/websites', {
+        method: 'POST',
+        headers: { 'cf-connecting-ip': `2001:db8:1:2::${host}` },
+        body: '{}',
+      })
+
+    const statuses = []
+    for (let host = 1; host <= 6; host++)
+      statuses.push((await post(host)).status)
+
+    expect(statuses.slice(0, 5)).toEqual([200, 200, 200, 200, 200])
+    expect(statuses[5]).toBe(429)
+  })
+
   it('does not expose anything outside /v1 yet', async () => {
     expect((await call('/admin')).status).toBe(404)
   })

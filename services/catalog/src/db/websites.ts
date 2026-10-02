@@ -7,14 +7,13 @@ import type {
   ParsedWebsiteSubmission,
   RejectionReason,
   Website,
-  WebsiteNeighbours,
   WebsiteStatus,
   WebsiteStatusEntry,
 } from '@nosnocabo/contract'
-import { toSearchKey } from '../lib/searchKey'
+import { toMatchQuery } from '../lib/searchQuery'
 import { decodeCursor, encodeCursor } from './cursor'
 
-type WebsiteRow = {
+export type WebsiteRow = {
   id: string
   url: string
   short_code: string | null
@@ -34,17 +33,15 @@ type WebsiteRow = {
   name_key: string
 }
 
-const WEBSITE_COLUMNS = `
+export const WEBSITE_COLUMNS = `
   w.id, w.url, w.short_code, w.name, w.description, w.color, w.favicon_url, w.repo,
   w.status, w.rejection_reason, w.verified_at, w.submitted_at, w.published_at,
-  w.rank_score, w.likes, lower(w.name) AS name_key,
-  (SELECT json_group_array(category_slug) FROM website_categories wc
-    WHERE wc.website_id = w.id) AS categories`
+  w.rank_score, w.likes, lower(w.name) AS name_key, w.category_slugs AS categories`
 
 const toIso = (ms: number | null) =>
   ms === null ? null : new Date(ms).toISOString()
 
-function toWebsite(row: WebsiteRow): Website {
+export function toWebsite(row: WebsiteRow): Website {
   return {
     id: row.id,
     url: row.url,
@@ -98,8 +95,8 @@ export async function insertWebsite(db: D1Database, website: NewWebsite) {
     db
       .prepare(
         `INSERT INTO websites (id, url, url_normalized, name, description, color,
-          favicon_url, repo, status, submitted_at, published_at, submitter_ip_hash, search_key)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          favicon_url, repo, status, submitted_at, published_at, submitter_ip_hash)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         website.id,
@@ -113,8 +110,7 @@ export async function insertWebsite(db: D1Database, website: NewWebsite) {
         website.status,
         website.submittedAt,
         website.publishedAt,
-        website.submitterIpHash,
-        toSearchKey(website.name, website.description)
+        website.submitterIpHash
       ),
     ...website.categories.map((slug) => insertCategory.bind(website.id, slug)),
   ])
@@ -184,18 +180,41 @@ const SORTS: Record<ParsedWebsiteListQuery['sort'], SortSpec> = {
   },
 }
 
-function escapeLike(value: string) {
-  return value.replace(/[\\%_]/g, (char) => `\\${char}`)
+type Statement = { sql: string; params: (string | number | null)[] }
+
+function totalSql(
+  query: ParsedWebsiteListQuery,
+  where: string,
+  params: (string | number | null)[]
+): Statement {
+  if (query.q) {
+    return {
+      sql: `SELECT COUNT(*) AS total FROM websites w WHERE ${where}`,
+      params,
+    }
+  }
+  if (query.categoria) {
+    return {
+      sql: 'SELECT published_count AS total FROM categories WHERE slug = ?',
+      params: [query.categoria],
+    }
+  }
+  return {
+    sql: "SELECT value AS total FROM counters WHERE name = 'published_websites'",
+    params: [],
+  }
 }
 
 export class InvalidCursorError extends Error {}
 
-export async function listWebsites(
-  db: D1Database,
+export function listSql(
   query: ParsedWebsiteListQuery
-): Promise<Page<Website>> {
+): { page: Statement; total: Statement } | null {
   const sort = SORTS[query.sort]
-  const filters = ["w.status = 'published'"]
+  // With a search, the unary + lets the few FTS matches drive the query, not every published row.
+  const filters = [
+    query.q ? "+w.status = 'published'" : "w.status = 'published'",
+  ]
   const params: (string | number | null)[] = []
 
   if (query.categoria) {
@@ -205,8 +224,13 @@ export async function listWebsites(
     params.push(query.categoria)
   }
   if (query.q) {
-    filters.push("w.search_key LIKE ? ESCAPE '\\'")
-    params.push(`%${escapeLike(toSearchKey(query.q))}%`)
+    const match = toMatchQuery(query.q)
+    if (!match) return null
+
+    filters.push(
+      'w.id IN (SELECT website_id FROM websites_fts WHERE websites_fts MATCH ?)'
+    )
+    params.push(match)
   }
 
   const where = filters.join(' AND ')
@@ -224,18 +248,29 @@ export async function listWebsites(
     pageParams.push(...values)
   }
 
-  const [page, count] = await db.batch<WebsiteRow | { total: number }>([
-    db
-      .prepare(
-        `SELECT ${WEBSITE_COLUMNS} FROM websites w
+  return {
+    page: {
+      sql: `SELECT ${WEBSITE_COLUMNS} FROM websites w
          WHERE ${pageFilters.join(' AND ')}
-         ORDER BY ${sort.orderBy} LIMIT ?`
-      )
-      .bind(...pageParams, query.limit + 1),
-    db
-      .prepare(`SELECT COUNT(*) AS total FROM websites w WHERE ${where}`)
-      .bind(...params),
-  ])
+         ORDER BY ${sort.orderBy} LIMIT ?`,
+      params: [...pageParams, query.limit + 1],
+    },
+    total: totalSql(query, where, params),
+  }
+}
+
+export async function listWebsites(
+  db: D1Database,
+  query: ParsedWebsiteListQuery
+): Promise<Page<Website>> {
+  const statements = listSql(query)
+  if (!statements) return { items: [], nextCursor: null, total: 0 }
+
+  const [page, count] = await db.batch<WebsiteRow | { total: number }>(
+    [statements.page, statements.total].map(({ sql, params }) =>
+      db.prepare(sql).bind(...params)
+    )
+  )
 
   const rows = (page?.results ?? []) as WebsiteRow[]
   const hasMore = rows.length > query.limit
@@ -244,7 +279,8 @@ export async function listWebsites(
 
   return {
     items: items.map(toWebsite),
-    nextCursor: hasMore && last ? encodeCursor(sort.cursorOf(last)) : null,
+    nextCursor:
+      hasMore && last ? encodeCursor(SORTS[query.sort].cursorOf(last)) : null,
     total: (count?.results[0] as { total: number } | undefined)?.total ?? 0,
   }
 }
@@ -252,75 +288,15 @@ export async function listWebsites(
 export async function listCategories(db: D1Database): Promise<CategoryList> {
   const [categories, total] = await db.batch<Category | { total: number }>([
     db.prepare(
-      `SELECT c.slug, COUNT(w.id) AS count
-       FROM categories c
-       LEFT JOIN website_categories wc ON wc.category_slug = c.slug
-       LEFT JOIN websites w ON w.id = wc.website_id AND w.status = 'published'
-       GROUP BY c.slug
-       ORDER BY c.position`
+      'SELECT slug, published_count AS count FROM categories ORDER BY position'
     ),
     db.prepare(
-      "SELECT COUNT(*) AS total FROM websites WHERE status = 'published'"
+      "SELECT value AS total FROM counters WHERE name = 'published_websites'"
     ),
   ])
 
   return {
     total: (total?.results[0] as { total: number } | undefined)?.total ?? 0,
     items: (categories?.results ?? []) as Category[],
-  }
-}
-
-// The ring order: verified sites first, then by publication date. It wraps around.
-export async function getNeighbours(
-  db: D1Database,
-  id: string
-): Promise<WebsiteNeighbours | null> {
-  const position = await db
-    .prepare(
-      `WITH ring AS (
-         SELECT id,
-           ROW_NUMBER() OVER (ORDER BY verified_at IS NULL, published_at, id) AS pos,
-           COUNT(*) OVER () AS total
-         FROM websites WHERE status = 'published'
-       )
-       SELECT pos, total FROM ring WHERE id = ?`
-    )
-    .bind(id)
-    .first<{ pos: number; total: number }>()
-
-  if (!position) return null
-  if (position.total < 2) return { previous: null, next: null, random: null }
-
-  const previousPos = ((position.pos - 2 + position.total) % position.total) + 1
-  const nextPos = (position.pos % position.total) + 1
-
-  const { results } = await db
-    .prepare(
-      `WITH ring AS (
-         SELECT id,
-           ROW_NUMBER() OVER (ORDER BY verified_at IS NULL, published_at, id) AS pos
-         FROM websites WHERE status = 'published'
-       )
-       SELECT ring.pos, ${WEBSITE_COLUMNS}
-       FROM ring JOIN websites w ON w.id = ring.id
-       WHERE ring.pos IN (?, ?)`
-    )
-    .bind(previousPos, nextPos)
-    .all<WebsiteRow & { pos: number }>()
-
-  const random = await db
-    .prepare(
-      `SELECT ${WEBSITE_COLUMNS} FROM websites w
-       WHERE w.status = 'published' AND w.id != ?
-       ORDER BY RANDOM() LIMIT 1`
-    )
-    .bind(id)
-    .first<WebsiteRow>()
-
-  const byPos = new Map(results.map((row) => [row.pos, toWebsite(row)]))
-  return {
-    previous: byPos.get(previousPos) ?? null,
-    next: byPos.get(nextPos) ?? null,
-    random: random && toWebsite(random),
   }
 }

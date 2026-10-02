@@ -2,12 +2,17 @@ import {
   cloudflareTest,
   readD1Migrations,
 } from '@cloudflare/vitest-pool-workers'
+import { readFile } from 'node:fs/promises'
 import { defineConfig } from 'vitest/config'
 import { fakeInternet } from './test/fakeInternet.ts'
 
 export default defineConfig(async () => {
   const migrations = await readD1Migrations(
     new URL('./migrations', import.meta.url).pathname
+  )
+  const rebuildSql = await readFile(
+    new URL('./sql/rebuild-derived.sql', import.meta.url),
+    'utf8'
   )
 
   return {
@@ -17,7 +22,7 @@ export default defineConfig(async () => {
         miniflare: {
           bindings: {
             TEST_MIGRATIONS: migrations,
-            AUTO_PUBLISH: 'false',
+            TEST_REBUILD_SQL: rebuildSql,
             TURNSTILE_SECRET: 'test-secret',
             IP_HASH_SALT: 'test-salt',
           },
