@@ -1,0 +1,26 @@
+{
+  "name": "@nosnocabo/catalog",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "migrate:local": "wrangler d1 migrations apply DB --local",
+    "deploy:staging": "wrangler d1 migrations apply DB --remote --env staging && wrangler deploy --env staging",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "cf-typegen": "wrangler types",
+    "seed:local": "node scripts/buildSeed.mjs && wrangler d1 execute DB --local --file seed/seed.sql",
+    "seed:staging": "node scripts/buildSeed.mjs && wrangler d1 execute DB --remote --env staging --file seed/seed.sql"
+  },
+  "dependencies": {
+    "@nosnocabo/contract": "*",
+    "hono": "^4.13.12",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20261001.1",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.146.0"
+  }
+}

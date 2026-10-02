@@ -78,3 +78,9 @@ coverage.xml
 Thumbs.db
 
 nos
+# Workers (TypeScript)
+node_modules/
+.wrangler/
+.dev.vars
+packages/*/dist/
+seed/seed.sql

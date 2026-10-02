@@ -1,0 +1,28 @@
+{
+  "name": "nos-sr",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "postinstall": "npm run build -w @nosnocabo/contract",
+    "dev": "cd services/catalog && ([ -f .dev.vars ] || cp .dev.vars.example .dev.vars) && npm run migrate:local && wrangler dev -c ../gateway/wrangler.jsonc -c wrangler.jsonc --persist-to .wrangler/state",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run build -w @nosnocabo/contract && npm run typecheck --workspaces --if-present",
+    "test": "npm run build -w @nosnocabo/contract && npm run test --workspaces --if-present",
+    "format": "prettier --write \"packages/*/src/**\" \"services/*/src/**\" \"services/*/test/**\" \"packages/*/test/**\""
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "~5.8.3",
+    "wrangler": "^4.146.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "esbuild@0.27.7": true,
+    "workerd@1.20260815.1": true,
+    "workerd@1.20261001.1": true
+  }
+}

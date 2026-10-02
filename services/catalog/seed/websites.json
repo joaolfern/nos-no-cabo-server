@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Querido Diário",
+    "url": "https://queridodiario.ok.org.br",
+    "description": "Projeto de tecnologia cívica usando Python para libertar diários oficiais do governo.",
+    "color": "#6c4b97",
+    "faviconUrl": "https://queridodiario.ok.org.br/favicon.ico",
+    "repo": null,
+    "categories": ["cidades"],
+    "publishedAt": "2019-06-01T00:00:00.000Z",
+    "verified": true
+  },
+  {
+    "name": "Conjuntura do mercado de trabalho brasileiro",
+    "url": "https://arthurwelle.github.io/taxa_desocupacao.github.io/",
+    "description": "Conjuntura do mercado de trabalho brasileiro.",
+    "color": "#007acc",
+    "faviconUrl": null,
+    "repo": null,
+    "categories": ["trabalho"],
+    "publishedAt": "2015-02-15T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "i-Educar",
+    "url": "https://ieducar.org",
+    "description": "Maior software de gestão escolar open-source do Brasil (PHP).",
+    "color": "#2d3748",
+    "faviconUrl": "https://ieducar.org/img/logo_horizontal.svg",
+    "repo": null,
+    "categories": ["educacao"],
+    "publishedAt": "2010-01-01T00:00:00.000Z",
+    "verified": true
+  },
+  {
+    "name": "Delegua",
+    "url": "https://github.com/DesignLiquido/delegua",
+    "description": "Uma linguagem de programação inteiramente em português. Baseada em TypeScript.",
+    "color": "#3178c6",
+    "faviconUrl": "https://github.githubassets.com/favicons/favicon.svg",
+    "repo": null,
+    "categories": ["educacao", "inclusao"],
+    "publishedAt": "2021-08-15T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "Tainacan",
+    "url": "https://tainacan.org",
+    "description": "Poderosa plataforma de repositório para WordPress para gerenciar coleções digitais.",
+    "color": "#1a57a5",
+    "faviconUrl": "https://tainacan.org/wp-content/uploads/2018/05/cropped-cropped-logo-300x300-2-32x32.png",
+    "repo": null,
+    "categories": ["arte-e-cultura"],
+    "publishedAt": "2014-05-01T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "TI no Canadá",
+    "url": "https://ti-no-canada.github.io",
+    "description": "O objetivo deste site é auxiliar brasileiros e falantes de português com informações úteis sobre o Canadá",
+    "color": "#ff0000",
+    "faviconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/1200px-Flag_of_Canada_%28Pantone%29.svg.png",
+    "repo": null,
+    "categories": ["inclusao", "trabalho"],
+    "publishedAt": "2020-04-20T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "Atados",
+    "url": "https://www.atados.com.br",
+    "description": "Plataforma de Voluntariado que conecta Pessoas e Oportunidades de Trabalho Voluntário.",
+    "color": "#dc3545",
+    "faviconUrl": "https://www.atados.com.br/static/logo/logo-light.svg",
+    "repo": null,
+    "categories": ["comunidades", "trabalho"],
+    "publishedAt": "2024-05-01T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "Poku",
+    "url": "https://poku.io",
+    "description": "Um executor de testes multiplataforma que torna os testes simples. (TypeScript).",
+    "color": "#f7df1e",
+    "faviconUrl": "https://poku.io/favicon.ico",
+    "repo": null,
+    "categories": ["outros"],
+    "publishedAt": "2023-11-01T00:00:00.000Z",
+    "verified": true
+  },
+  {
+    "name": "Universidade Livre",
+    "url": "https://github.com/Universidade-Livre",
+    "description": "Um currículo completo de Ciência da Computação, aberto e gratuito em português.",
+    "color": "#24292e",
+    "faviconUrl": "https://github.githubassets.com/favicons/favicon.svg",
+    "repo": null,
+    "categories": ["educacao", "inclusao"],
+    "publishedAt": "2017-02-10T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "Estela",
+    "url": "https://estela-frontend.vercel.app/",
+    "description": "O Estela é uma plataforma de e-commerce voltada para o mercado de jogos digitais, visando suprir as necessidades do público brasileiro com foco em segurança na transação e usabilidade.",
+    "color": "#4f46e5",
+    "faviconUrl": "https://estela-frontend.vercel.app/favicon.ico",
+    "repo": null,
+    "categories": ["trabalho", "arte-e-cultura"],
+    "publishedAt": "2023-12-01T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "Deepmed",
+    "url": "https://www.deepmed.net.br",
+    "description": "O deepmed é o primeiro ecossistema educacional brasileiro focado em transformar o aprendizado de medicina através de conteúdo programático específico, alinhado ao currículo das faculdades de medicina.",
+    "color": "#0e7490",
+    "faviconUrl": "https://deepmed.net.br/favicon.png",
+    "repo": null,
+    "categories": ["educacao", "saude"],
+    "publishedAt": "2023-12-01T00:00:00.000Z",
+    "verified": false
+  },
+  {
+    "name": "Portaldosaber",
+    "url": "https://portaldosaber.obmep.org.br",
+    "description": "Uma plataforma colaborativa para compartilhar conhecimento e ideias.",
+    "color": "#f59e0b",
+    "faviconUrl": null,
+    "repo": null,
+    "categories": ["educacao", "arte-e-cultura"],
+    "publishedAt": "2022-05-01T00:00:00.000Z",
+    "verified": false
+  }
+]
