@@ -1,0 +1,21 @@
+{
+  "name": "@nosnocabo/verification",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy:staging": "wrangler deploy --env staging",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@nosnocabo/contract": "*",
+    "hono": "^4.13.12"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20261001.1",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.146.0"
+  }
+}

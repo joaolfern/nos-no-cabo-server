@@ -36,7 +36,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Order matters: Workers that bind to CatalogRpc or to another Worker deploy after it.
       - run: npm run deploy:staging -w @nosnocabo/catalog
+      - run: npm run deploy:staging -w @nosnocabo/verification
+      - run: npm run deploy:staging -w @nosnocabo/router
       - run: npm run deploy:staging -w @nosnocabo/gateway
 
   publish-contract:

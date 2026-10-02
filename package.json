@@ -5,16 +5,19 @@
   "workspaces": [
     "packages/*",
     "services/catalog",
-    "services/gateway"
+    "services/gateway",
+    "services/router",
+    "services/verification"
   ],
   "scripts": {
     "postinstall": "npm run build -w @nosnocabo/contract",
-    "dev": "cd services/catalog && ([ -f .dev.vars ] || cp .dev.vars.example .dev.vars) && npm run migrate:local && wrangler dev -c ../gateway/wrangler.jsonc -c wrangler.jsonc $([ -f ../moderation/wrangler.jsonc ] && echo -c ../moderation/wrangler.jsonc) --persist-to .wrangler/state",
+    "dev": "cd services/catalog && ([ -f .dev.vars ] || cp .dev.vars.example .dev.vars) && npm run migrate:local && wrangler dev -c ../gateway/wrangler.jsonc -c wrangler.jsonc -c ../verification/wrangler.jsonc $([ -f ../moderation/wrangler.jsonc ] && echo -c ../moderation/wrangler.jsonc) --persist-to .wrangler/state",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run build -w @nosnocabo/contract && npm run typecheck --workspaces --if-present",
     "test": "npm run build -w @nosnocabo/contract && npm run test --workspaces --if-present",
     "typecheck:moderation": "if [ -f services/moderation/package.json ]; then npm run typecheck --prefix services/moderation; else echo 'services/moderation is not checked out (private submodule).'; fi",
     "test:moderation": "if [ -f services/moderation/package.json ]; then npm test --prefix services/moderation; else echo 'services/moderation is not checked out (private submodule).'; fi",
+    "dev:router": "cd services/catalog && wrangler dev -c ../router/wrangler.jsonc -c wrangler.jsonc --persist-to .wrangler/state --port 8788",
     "format": "prettier --write \"packages/*/src/**\" \"services/*/src/**\" \"services/*/test/**\" \"packages/*/test/**\""
   },
   "devDependencies": {

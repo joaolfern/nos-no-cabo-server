@@ -9,14 +9,20 @@
   "vars": {
     "ALLOWED_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
   },
-  "services": [{ "binding": "CATALOG", "service": "nnc-catalog" }],
+  "services": [
+    { "binding": "CATALOG", "service": "nnc-catalog" },
+    { "binding": "VERIFICATION", "service": "nnc-verification" },
+  ],
   "env": {
     "staging": {
       "name": "nnc-gateway-staging",
       "vars": {
         "ALLOWED_ORIGINS": "https://nosnocabo.joaolfern.workers.dev,http://localhost:5173",
       },
-      "services": [{ "binding": "CATALOG", "service": "nnc-catalog-staging" }],
+      "services": [
+        { "binding": "CATALOG", "service": "nnc-catalog-staging" },
+        { "binding": "VERIFICATION", "service": "nnc-verification-staging" },
+      ],
     },
   },
 }

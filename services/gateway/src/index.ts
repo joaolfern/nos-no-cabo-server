@@ -3,6 +3,7 @@ import { cors } from 'hono/cors'
 
 type Env = {
   CATALOG: Fetcher
+  VERIFICATION: Fetcher
   ALLOWED_ORIGINS: string
 }
 
@@ -24,10 +25,15 @@ app.use('/v1/*', (c, next) =>
   })(c, next)
 )
 
-app.all('/v1/*', async (c) => {
-  const response = await c.env.CATALOG.fetch(c.req.raw)
-  // Copy the response so the CORS middleware can add its headers.
+// Copy each response so the CORS middleware can add its headers.
+const forward = async (service: Fetcher, request: Request) => {
+  const response = await service.fetch(request)
   return new Response(response.body, response)
-})
+}
+
+app.post('/v1/websites/:id/verify', (c) =>
+  forward(c.env.VERIFICATION, c.req.raw)
+)
+app.all('/v1/*', (c) => forward(c.env.CATALOG, c.req.raw))
 
 export default app

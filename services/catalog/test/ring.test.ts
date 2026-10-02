@@ -48,8 +48,17 @@ describe('ring', () => {
     const a = await published('alfa', { published_at: 1 })
     const b = await published('beta', { published_at: 2, verified_at: 3 })
 
+    await env.DB.prepare(
+      "UPDATE websites SET short_code = 'abc123' WHERE id = ?"
+    )
+      .bind(a)
+      .run()
+
     const ring = await exports.CatalogRpc.getRing()
-    expect(ring.ids).toEqual([b, a])
+    expect(ring.sites).toEqual([
+      { id: b, url: 'https://beta.dev/', shortCode: null },
+      { id: a, url: 'https://alfa.dev/', shortCode: 'abc123' },
+    ])
     expect(await exports.CatalogRpc.getRingVersion()).toBe(ring.version)
   })
 
