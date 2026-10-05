@@ -4,7 +4,9 @@ import categoriesSource from '../src/categories.ts?raw'
 import urlSource from '../src/url.ts?raw'
 import {
   ReportSubmission,
+  VoteSubmission,
   WebsiteListQuery,
+  WebsitePage,
   WebsiteSubmission,
   normalizeUrl,
   toAbsoluteUrl,
@@ -81,6 +83,56 @@ describe('ReportSubmission', () => {
   })
 })
 
+describe('VoteSubmission', () => {
+  const voterId = '6f1c2b8e-4d3a-4f5e-9a7b-1c2d3e4f5a6b'
+
+  it.each([1, -1, 0])('accepts the vote %s', (value) => {
+    expect(VoteSubmission.parse({ voterId, value })).toEqual({ voterId, value })
+  })
+
+  it('rejects other values and a voter id that is not a uuid', () => {
+    expect(VoteSubmission.safeParse({ voterId, value: 2 }).success).toBe(false)
+    expect(VoteSubmission.safeParse({ voterId: 'eu', value: 1 }).success).toBe(
+      false
+    )
+  })
+})
+
+describe('WebsitePage', () => {
+  const website = {
+    id: '01SITE',
+    url: 'https://projeto.dev/',
+    shortCode: 'abc123',
+    name: 'Projeto',
+    description: '',
+    color: null,
+    faviconUrl: null,
+    categories: ['educacao'],
+    status: 'published',
+    verifiedAt: null,
+    submittedAt: '2026-10-05T00:00:00.000Z',
+    publishedAt: '2026-10-05T00:00:00.000Z',
+    likes: 0,
+  }
+  const neighbours = { previous: null, next: null, random: null }
+
+  it('accepts a page with or without stats', () => {
+    const stats = {
+      clicks: 1,
+      clicks30d: 1,
+      referrals: 0,
+      likes: 0,
+      dislikes: 0,
+    }
+    expect(WebsitePage.safeParse({ website, neighbours, stats }).success).toBe(
+      true
+    )
+    expect(
+      WebsitePage.safeParse({ website, neighbours, stats: null }).success
+    ).toBe(true)
+  })
+})
+
 describe('zod-free entry points', () => {
   // Web clients import these without pulling the schemas (and zod) into their bundle.
   it.each([
@@ -90,8 +142,12 @@ describe('zod-free entry points', () => {
     expect([...source.matchAll(/from '([^']+)'/g)]).toEqual([])
   })
 
-  it.each(['categories', 'url'])('%s is published as its own export', (entry) => {
-    const exports: Record<string, { import?: { default?: string } }> = manifest.exports
-    expect(exports[`./${entry}`]?.import?.default).toBe(`./dist/${entry}.js`)
-  })
+  it.each(['categories', 'url'])(
+    '%s is published as its own export',
+    (entry) => {
+      const exports: Record<string, { import?: { default?: string } }> =
+        manifest.exports
+      expect(exports[`./${entry}`]?.import?.default).toBe(`./dist/${entry}.js`)
+    }
+  )
 })

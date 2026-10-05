@@ -72,6 +72,7 @@ export const Website = z.object({
   verifiedAt: z.string().nullable(),
   submittedAt: z.string(),
   publishedAt: z.string().nullable(),
+  likes: z.number().int(),
 })
 export type Website = z.infer<typeof Website>
 
