@@ -1,6 +1,6 @@
 const FETCH_TIMEOUT_MS = 10_000
 const MAX_PAGE_BYTES = 1024 * 1024
-const USER_AGENT = 'NosNoCaboBot/1.0 (+https://nosnocabo.pages.dev)'
+const USER_AGENT = 'NosNoCaboBot/1.0 (+https://nosnocabo.com.br)'
 
 function limitBody(response: Response) {
   let received = 0

@@ -7,7 +7,7 @@
   // Private: the gateway forwards POST /v1/websites/:id/verify through a service binding.
   "workers_dev": false,
   "preview_urls": false,
-  "vars": { "HOME_HOSTS": "nosnocabo.pages.dev" },
+  "vars": { "HOME_HOSTS": "nosnocabo.com.br" },
   "triggers": { "crons": ["17 * * * *"] },
   "services": [
     {
@@ -22,7 +22,7 @@
       "workers_dev": false,
       "preview_urls": false,
       "vars": {
-        "HOME_HOSTS": "nosnocabo.joaolfern.workers.dev,nosnocabo.pages.dev",
+        "HOME_HOSTS": "nosnocabo.com.br,nosnocabo.joaolfern.workers.dev,nosnocabo.pages.dev",
       },
       "triggers": { "crons": ["17 * * * *"] },
       "services": [

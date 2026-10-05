@@ -2,7 +2,7 @@ import { WEBSITE_LIMITS, type WebsitePreview } from '@nosnocabo/contract'
 
 const FETCH_TIMEOUT_MS = 8000
 const MANIFEST_TIMEOUT_MS = 4000
-const USER_AGENT = 'NosNoCaboBot/1.0 (+https://nosnocabo.pages.dev)'
+const USER_AGENT = 'NosNoCaboBot/1.0 (+https://nosnocabo.com.br)'
 export const MAX_PAGE_BYTES = 1024 * 1024
 const MAX_MANIFEST_BYTES = 100 * 1024
 
