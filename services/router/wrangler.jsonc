@@ -7,7 +7,7 @@
   // Public: widget ring links and short links point here (RING_BASE_URL in the client).
   "workers_dev": true,
   "preview_urls": false,
-  "vars": { "HOME_URL": "https://nosnocabo.pages.dev/" },
+  "vars": { "HOME_URL": "https://nosnocabo.com.br/" },
   "services": [
     {
       "binding": "CATALOG",
@@ -20,7 +20,15 @@
       "name": "nnc-router-staging",
       "workers_dev": true,
       "preview_urls": false,
-      "vars": { "HOME_URL": "https://nosnocabo.joaolfern.workers.dev/" },
+      "vars": { "HOME_URL": "https://nosnocabo.com.br/" },
+      // Routes run before the site's custom domain, so these paths reach the router.
+      "routes": [
+        {
+          "pattern": "nosnocabo.com.br/ring/*",
+          "zone_name": "nosnocabo.com.br",
+        },
+        { "pattern": "nosnocabo.com.br/r/*", "zone_name": "nosnocabo.com.br" },
+      ],
       "services": [
         {
           "binding": "CATALOG",
