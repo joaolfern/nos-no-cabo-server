@@ -1,31 +1,143 @@
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01DC85C000MZR82QBWWK21Y8B5', 'https://queridodiario.ok.org.br', 'queridodiario.ok.org.br', 'Querido Diário', 'Projeto de tecnologia cívica usando Python para libertar diários oficiais do governo.', '#6c4b97', 'https://queridodiario.ok.org.br/favicon.ico', NULL, 'published', 1559347200000, 1559347200000, 1559347200000, 'seed', 'AV3yju');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'cidades' FROM websites WHERE url_normalized = 'queridodiario.ok.org.br';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('019E58HQ00T1YVRVM4PYNPJ2TM', 'https://arthurwelle.github.io/taxa_desocupacao.github.io/', 'arthurwelle.github.io/taxa_desocupacao.github.io', 'Conjuntura do mercado de trabalho brasileiro', 'Conjuntura do mercado de trabalho brasileiro.', '#007acc', NULL, NULL, 'published', 1423958400000, 1423958400000, NULL, 'seed', 'NQcWP2');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'trabalho' FROM websites WHERE url_normalized = 'arthurwelle.github.io/taxa_desocupacao.github.io';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('014QKJWY0049MQRS8S6010CEV2', 'https://ieducar.org', 'ieducar.org', 'i-Educar', 'Maior software de gestão escolar open-source do Brasil (PHP).', '#2d3748', 'https://ieducar.org/img/logo_horizontal.svg', NULL, 'published', 1262304000000, 1262304000000, 1262304000000, 'seed', 'jxuwnX');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'ieducar.org';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01FD3HQA00H4D02YQRCSDM53TH', 'https://github.com/DesignLiquido/delegua', 'github.com/DesignLiquido/delegua', 'Delegua', 'Uma linguagem de programação inteiramente em português. Baseada em TypeScript.', '#3178c6', 'https://github.githubassets.com/favicons/favicon.svg', NULL, 'published', 1628985600000, 1628985600000, NULL, 'seed', 'weW6wl');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'github.com/DesignLiquido/delegua';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'inclusao' FROM websites WHERE url_normalized = 'github.com/DesignLiquido/delegua';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('018PTH99005QJSBYJY08MBS661', 'https://tainacan.org', 'tainacan.org', 'Tainacan', 'Poderosa plataforma de repositório para WordPress para gerenciar coleções digitais.', '#1a57a5', 'https://tainacan.org/wp-content/uploads/2018/05/cropped-cropped-logo-300x300-2-32x32.png', NULL, 'published', 1398902400000, 1398902400000, NULL, 'seed', 'agOoJA');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'arte-e-cultura' FROM websites WHERE url_normalized = 'tainacan.org';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01E6AE4W00J5C0QNSH1JRR0W4D', 'https://ti-no-canada.github.io', 'ti-no-canada.github.io', 'TI no Canadá', 'O objetivo deste site é auxiliar brasileiros e falantes de português com informações úteis sobre o Canadá', '#ff0000', 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Flag_of_Canada_%28Pantone%29.svg/1200px-Flag_of_Canada_%28Pantone%29.svg.png', NULL, 'published', 1587340800000, 1587340800000, NULL, 'seed', 'o1yJgd');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'inclusao' FROM websites WHERE url_normalized = 'ti-no-canada.github.io';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'trabalho' FROM websites WHERE url_normalized = 'ti-no-canada.github.io';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01HWRQ6W001HZYAY7AKTBRVZEV', 'https://www.atados.com.br', 'atados.com.br', 'Atados', 'Plataforma de Voluntariado que conecta Pessoas e Oportunidades de Trabalho Voluntário.', '#dc3545', 'https://www.atados.com.br/static/logo/logo-light.svg', NULL, 'published', 1714521600000, 1714521600000, NULL, 'seed', 'BaXZeF');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'atados.com.br';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'trabalho' FROM websites WHERE url_normalized = 'atados.com.br';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01HE42W20073F3DCBXZ8WCZW6S', 'https://poku.io', 'poku.io', 'Poku', 'Um executor de testes multiplataforma que torna os testes simples. (TypeScript).', '#f7df1e', 'https://poku.io/favicon.ico', NULL, 'published', 1698796800000, 1698796800000, 1698796800000, 'seed', 'bWNbhI');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'outros' FROM websites WHERE url_normalized = 'poku.io';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01B8JN3H00043SCXGH6JZ4HB9X', 'https://github.com/Universidade-Livre', 'github.com/Universidade-Livre', 'Universidade Livre', 'Um currículo completo de Ciência da Computação, aberto e gratuito em português.', '#24292e', 'https://github.githubassets.com/favicons/favicon.svg', NULL, 'published', 1486684800000, 1486684800000, NULL, 'seed', 'l0FBFK');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'github.com/Universidade-Livre';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'inclusao' FROM websites WHERE url_normalized = 'github.com/Universidade-Livre';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01HGHASM000DYK3JZ5SEJPR3A4', 'https://estela-frontend.vercel.app/', 'estela-frontend.vercel.app', 'Estela', 'O Estela é uma plataforma de e-commerce voltada para o mercado de jogos digitais, visando suprir as necessidades do público brasileiro com foco em segurança na transação e usabilidade.', '#4f46e5', 'https://estela-frontend.vercel.app/favicon.ico', NULL, 'published', 1701388800000, 1701388800000, NULL, 'seed', 'GLD5OS');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'trabalho' FROM websites WHERE url_normalized = 'estela-frontend.vercel.app';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'arte-e-cultura' FROM websites WHERE url_normalized = 'estela-frontend.vercel.app';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01HGHASM00GQSAB8JXBWK91DHP', 'https://www.deepmed.net.br', 'deepmed.net.br', 'Deepmed', 'O deepmed é o primeiro ecossistema educacional brasileiro focado em transformar o aprendizado de medicina através de conteúdo programático específico, alinhado ao currículo das faculdades de medicina.', '#0e7490', 'https://deepmed.net.br/favicon.png', NULL, 'published', 1701388800000, 1701388800000, NULL, 'seed', 'yA7ah8');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'deepmed.net.br';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'saude' FROM websites WHERE url_normalized = 'deepmed.net.br';
-INSERT OR IGNORE INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01G1YENF00SHV7NT4WP1D1EGAZ', 'https://portaldosaber.obmep.org.br', 'portaldosaber.obmep.org.br', 'Portaldosaber', 'Uma plataforma colaborativa para compartilhar conhecimento e ideias.', '#f59e0b', NULL, NULL, 'published', 1651363200000, 1651363200000, NULL, 'seed', '6syMOo');
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'portaldosaber.obmep.org.br';
-INSERT OR IGNORE INTO website_categories (website_id, category_slug) SELECT id, 'arte-e-cultura' FROM websites WHERE url_normalized = 'portaldosaber.obmep.org.br';
+DELETE FROM websites WHERE submitter_ip_hash = 'seed' AND url_normalized NOT IN ('fit-tecnologia.org.br/pnaat', 'qedu.org.br', 'novaescola.org.br', 'cataki.org', 'prosas.com.br', 'vlibras.gov.br', 'guiaderodas.com', 'tainacan.org', 'wikifavelas.com.br', 'queridodiario.org.br', 'serenata.ai', 'dadosabertos.saude.gov.br', 'impulsogov.org', 'mapbiomas.org', 'wikiaves.com.br', 'fogocruzado.org.br', 'brasilparticipativo.presidencia.gov.br', 'atados.com.br', 'transformabrasil.com.br');
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01M2Y1SM00MZ2HKGHJ1SX009GA', 'https://fit-tecnologia.org.br/pnaat', 'fit-tecnologia.org.br/pnaat', 'PNAAT', 'Residência tecnológica em IA e IoT para sistemas embarcados, com cursos online gratuitos e certificados, laboratórios maker e bolsas de residência em empresas, em uma competição entre 15 regiões do Brasil.', NULL, 'https://fit-tecnologia.org.br/pnaat/favicon.ico', NULL, 'published', 1789862400000, 1789862400000, NULL, 'seed', 'nreyTM')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'fit-tecnologia.org.br/pnaat' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'fit-tecnologia.org.br/pnaat' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'ia-e-iot' FROM websites WHERE url_normalized = 'fit-tecnologia.org.br/pnaat' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JNYNKV00S10ECGXS9AVQ0X12', 'https://qedu.org.br', 'qedu.org.br', 'QEdu', 'Reúne dados públicos da educação básica, como Saeb e Ideb, em painéis claros sobre escolas, municípios e estados.', NULL, 'https://qedu.org.br/favicon.ico', NULL, 'published', 1741564800000, 1741564800000, NULL, 'seed', 'oEGCAc')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'qedu.org.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'qedu.org.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01J59NB2002AC13GT07DP44612', 'https://novaescola.org.br', 'novaescola.org.br', 'Nova Escola', 'Plataforma gratuita com planos de aula, cursos e conteúdos alinhados à BNCC para professores da educação básica.', NULL, 'https://novaescola.org.br/apple-icon-57x57.png', NULL, 'published', 1723680000000, 1723680000000, NULL, 'seed', 'lHYFXl')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'novaescola.org.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'educacao' FROM websites WHERE url_normalized = 'novaescola.org.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JJ0G4M009JBVJ7MJ9V9FC8KM', 'https://www.cataki.org', 'cataki.org', 'Cataki', 'Aplicativo que conecta catadores de materiais recicláveis a quem precisa de coleta, aumentando a renda e a visibilidade desse trabalho.', NULL, 'https://www.cataki.org/favicon.ico', NULL, 'published', 1737331200000, 1737331200000, NULL, 'seed', 'TnaJMJ')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'cataki.org' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'trabalho' FROM websites WHERE url_normalized = 'cataki.org' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'meio-ambiente' FROM websites WHERE url_normalized = 'cataki.org' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JBWSY000MGGEBZXBYBX0T2YH', 'https://prosas.com.br', 'prosas.com.br', 'Prosas', 'Plataforma de seleção e monitoramento de projetos sociais que conecta patrocinadores, editais e organizações da sociedade civil.', NULL, 'https://prosas.com.br/favicon.ico', NULL, 'published', 1730764800000, 1730764800000, NULL, 'seed', 'bsb7jw')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'prosas.com.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'trabalho' FROM websites WHERE url_normalized = 'prosas.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'prosas.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JWMCKG00PVA64V0JQXXGJG03', 'https://vlibras.gov.br', 'vlibras.gov.br', 'VLibras', 'Conjunto gratuito e de código aberto de ferramentas que traduz conteúdos digitais em português para a Língua Brasileira de Sinais (Libras).', '#00a300', 'https://www.gov.br/governodigital/++theme++padrao_govbr/favicons/apple-touch-icon.png', NULL, 'published', 1748736000000, 1748736000000, NULL, 'seed', 'f7NDLY')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'vlibras.gov.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'inclusao' FROM websites WHERE url_normalized = 'vlibras.gov.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01J9Z0CR00QSZA2E9J4YAFZN1W', 'https://guiaderodas.com', 'guiaderodas.com', 'Guiaderodas', 'Aplicativo colaborativo para avaliar e mapear a acessibilidade de lugares para pessoas com deficiência ou mobilidade reduzida.', NULL, 'https://guiaderodas.com/wp-content/uploads/2026/08/cropped-Favicon-32x32.png', NULL, 'published', 1728691200000, 1728691200000, NULL, 'seed', 'OthZGF')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'guiaderodas.com' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'inclusao' FROM websites WHERE url_normalized = 'guiaderodas.com' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'cidades' FROM websites WHERE url_normalized = 'guiaderodas.com' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01HWRQ6W0012P6GZSKK4VKA84Z', 'https://tainacan.org', 'tainacan.org', 'Tainacan', 'Plataforma de código aberto para repositórios digitais em WordPress, usada por museus, arquivos e bibliotecas para publicar acervos.', '#1a57a5', 'https://tainacan.org/wp-content/uploads/2018/05/cropped-cropped-logo-300x300-2-32x32.png', 'https://github.com/tainacan/tainacan', 'published', 1714521600000, 1714521600000, NULL, 'seed', 'r8nIEo')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'tainacan.org' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'arte-e-cultura' FROM websites WHERE url_normalized = 'tainacan.org' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JM0W2K00N00WQHG1X694DAFN', 'https://wikifavelas.com.br', 'wikifavelas.com.br', 'Dicionário de Favelas Marielle Franco', 'Wiki de acesso aberto que reúne histórias, memórias e conhecimentos produzidos nas favelas e periferias.', NULL, 'https://wikifavelas.com.br/themes/images/favicon.ico', NULL, 'published', 1739491200000, 1739491200000, NULL, 'seed', '7YLkSz')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'wikifavelas.com.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'arte-e-cultura' FROM websites WHERE url_normalized = 'wikifavelas.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'wikifavelas.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01K4195M00T2TTSNC6KNADSNJ6', 'https://queridodiario.org.br', 'queridodiario.org.br', 'Querido Diário', 'Extrai e organiza os diários oficiais dos municípios com tecnologia aberta, facilitando o acompanhamento dos atos das prefeituras.', '#6c4b97', 'https://queridodiario.org.br/favicon.ico', 'https://github.com/okfn-brasil/querido-diario', 'published', 1756684800000, 1756684800000, NULL, 'seed', 'qquEut')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'queridodiario.org.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'ia-e-iot' FROM websites WHERE url_normalized = 'queridodiario.org.br' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'cidades' FROM websites WHERE url_normalized = 'queridodiario.org.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01J1NSEQ00M9ZV2B9EHF9GJA0N', 'https://serenata.ai', 'serenata.ai', 'Operação Serenata de Amor', 'Projeto aberto que usa inteligência artificial para analisar gastos de parlamentares e apontar possíveis irregularidades.', NULL, NULL, 'https://github.com/okfn-brasil/serenata-de-amor', 'published', 1719792000000, 1719792000000, NULL, 'seed', 'MrlTJU')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'serenata.ai' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'ia-e-iot' FROM websites WHERE url_normalized = 'serenata.ai' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'cidades' FROM websites WHERE url_normalized = 'serenata.ai' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JSDCPR00N3WENGAK4GAFGK57', 'https://dadosabertos.saude.gov.br', 'dadosabertos.saude.gov.br', 'OpenDataSUS', 'Portal de dados abertos do SUS, com indicadores e bases públicas de saúde para pesquisa e controle social.', NULL, 'https://dadosabertos.saude.gov.br/favicons/apple-touch-icon.png', NULL, 'published', 1745280000000, 1745280000000, NULL, 'seed', 'xFtwST')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'dadosabertos.saude.gov.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'saude' FROM websites WHERE url_normalized = 'dadosabertos.saude.gov.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JZKNA300SY9DMDAE1ZQS4J9S', 'https://impulsogov.org', 'impulsogov.org', 'ImpulsoGov', 'Organização sem fins lucrativos que cria ferramentas de dados para apoiar equipes do SUS na atenção primária à saúde.', NULL, 'https://images.squarespace-cdn.com/content/v1/67fd2069e17029186d16a300/daa3681e-c1f6-4eff-8efa-3d73963a8f78/favicon.ico?format=100w', NULL, 'published', 1751932800000, 1751932800000, NULL, 'seed', '48Q8Ln')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'impulsogov.org' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'saude' FROM websites WHERE url_normalized = 'impulsogov.org' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JTEVW300N30G2GR90S20K2BT', 'https://mapbiomas.org', 'mapbiomas.org', 'MapBiomas', 'Rede colaborativa que produz mapas abertos de uso da terra, desmatamento, fogo e água em todos os biomas brasileiros.', NULL, 'https://mapbiomas.org/wp-content/themes/mapbiomas/assets/img/favicons/favicon.ico', NULL, 'published', 1746403200000, 1746403200000, NULL, 'seed', 'E0k5eK')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'mapbiomas.org' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'meio-ambiente' FROM websites WHERE url_normalized = 'mapbiomas.org' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01J816VG00EJM77JY2076KQFB0', 'https://www.wikiaves.com.br', 'wikiaves.com.br', 'WikiAves', 'Comunidade de ciência cidadã em que observadores compartilham fotos e sons das aves do Brasil.', NULL, 'https://www.wikiaves.com.br/img/logo/favicon.ico', NULL, 'published', 1726617600000, 1726617600000, NULL, 'seed', '5mED6w')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'wikiaves.com.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'meio-ambiente' FROM websites WHERE url_normalized = 'wikiaves.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'wikiaves.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01K1PKMS000DNNRRCXZVBXEDJ2', 'https://fogocruzado.org.br', 'fogocruzado.org.br', 'Fogo Cruzado', 'Laboratório de dados que registra tiroteios e violência armada em regiões metropolitanas e publica os dados de forma aberta.', NULL, 'https://fogocruzado.org.br/favicon.ico', NULL, 'published', 1754179200000, 1754179200000, NULL, 'seed', 'RRcS4Q')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'fogocruzado.org.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'cidades' FROM websites WHERE url_normalized = 'fogocruzado.org.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JQD0RS00TEHTS5TA84ZMQNGV', 'https://brasilparticipativo.presidencia.gov.br', 'brasilparticipativo.presidencia.gov.br', 'Brasil Participativo', 'Plataforma oficial de participação social do Governo Federal para consultas públicas, conferências e propostas colaborativas.', '#1351b4', NULL, NULL, 'published', 1743120000000, 1743120000000, NULL, 'seed', 'P2AebR')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'brasilparticipativo.presidencia.gov.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'cidades' FROM websites WHERE url_normalized = 'brasilparticipativo.presidencia.gov.br' AND submitter_ip_hash = 'seed';
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'brasilparticipativo.presidencia.gov.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01HZZQ3M00E7X65G4NJNMCNBM6', 'https://atados.com.br', 'atados.com.br', 'Atados', 'Plataforma de voluntariado que conecta pessoas a organizações sociais e causas em todo o Brasil.', '#dc3545', 'https://www.atados.com.br/static/logo/logo-light.svg', NULL, 'published', 1717977600000, 1717977600000, NULL, 'seed', 'Qsz7qb')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'atados.com.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'atados.com.br' AND submitter_ip_hash = 'seed';
+INSERT INTO websites (id, url, url_normalized, name, description, color, favicon_url, repo, status, submitted_at, published_at, verified_at, submitter_ip_hash, short_code) VALUES ('01JE2AND00TM1JT2N4XD9K02B0', 'https://transformabrasil.com.br', 'transformabrasil.com.br', 'Transforma Brasil', 'Plataforma nacional de voluntariado que conecta voluntários a organizações e projetos sociais.', NULL, NULL, NULL, 'published', 1733097600000, 1733097600000, NULL, 'seed', '6cNqkG')
+  ON CONFLICT (url_normalized) DO UPDATE SET url = excluded.url, name = excluded.name,
+    description = excluded.description, color = excluded.color, favicon_url = excluded.favicon_url,
+    repo = excluded.repo, published_at = excluded.published_at, verified_at = excluded.verified_at
+  WHERE websites.submitter_ip_hash = 'seed';
+DELETE FROM website_categories WHERE website_id IN (SELECT id FROM websites WHERE url_normalized = 'transformabrasil.com.br' AND submitter_ip_hash = 'seed');
+INSERT INTO website_categories (website_id, category_slug) SELECT id, 'comunidades' FROM websites WHERE url_normalized = 'transformabrasil.com.br' AND submitter_ip_hash = 'seed';
