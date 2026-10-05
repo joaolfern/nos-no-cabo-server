@@ -9,7 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nosnocabo/contract": "*",
+    "@nosnocabo/contract": "workspace:*",
     "hono": "^4.13.12"
   },
   "devDependencies": {
