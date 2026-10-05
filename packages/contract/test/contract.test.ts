@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import manifest from '../package.json'
+import categoriesSource from '../src/categories.ts?raw'
+import urlSource from '../src/url.ts?raw'
 import {
   ReportSubmission,
   WebsiteListQuery,
@@ -75,5 +78,20 @@ describe('ReportSubmission', () => {
       ReportSubmission.safeParse({ reason: 'other', comment: 'a'.repeat(501) })
         .success
     ).toBe(false)
+  })
+})
+
+describe('zod-free entry points', () => {
+  // Web clients import these without pulling the schemas (and zod) into their bundle.
+  it.each([
+    ['categories', categoriesSource],
+    ['url', urlSource],
+  ])('%s imports nothing that loads zod', (_entry, source) => {
+    expect([...source.matchAll(/from '([^']+)'/g)]).toEqual([])
+  })
+
+  it.each(['categories', 'url'])('%s is published as its own export', (entry) => {
+    const exports: Record<string, { import?: { default?: string } }> = manifest.exports
+    expect(exports[`./${entry}`]?.import?.default).toBe(`./dist/${entry}.js`)
   })
 })
