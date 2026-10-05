@@ -1,0 +1,11 @@
+# services/moderation is a private submodule with its own pnpm setup, so it stays out.
+packages:
+  - packages/*
+  - services/catalog
+  - services/gateway
+  - services/router
+  - services/verification
+
+allowBuilds:
+  esbuild: true
+  workerd: true

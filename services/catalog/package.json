@@ -13,8 +13,8 @@
     "seed:staging": "node scripts/buildSeed.mjs && wrangler d1 execute DB --remote --env staging --file seed/seed.sql"
   },
   "dependencies": {
-    "@nosnocabo/contract": "*",
-    "@nosnocabo/ip": "*",
+    "@nosnocabo/contract": "workspace:*",
+    "@nosnocabo/ip": "workspace:*",
     "hono": "^4.13.12",
     "zod": "^4.6.5"
   },
