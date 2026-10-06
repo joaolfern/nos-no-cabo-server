@@ -8,8 +8,9 @@
   "workers_dev": false,
   "preview_urls": false,
   // TURNSTILE_SECRET and IP_HASH_SALT are secrets: .dev.vars locally, `wrangler secret put` remotely.
-  // Report alerts: add a send_email binding ALERT_EMAIL plus ALERT_FROM and ALERT_TO vars once
-  // Email Routing is on a domain we own (docs/plans/form-rework.md, "Before launch").
+  // Report alerts (staging): ALERT_EMAIL sends through Email Routing on nosnocabo.com.br. The
+  // recipient, ALERT_TO, is a secret so the owner's address stays out of this public repo; it
+  // must be a verified Email Routing destination.
   "vars": { "HOME_URL": "https://nosnocabo.com.br/" },
   "queues": {
     "producers": [
@@ -29,7 +30,11 @@
       "name": "nnc-catalog-staging",
       "workers_dev": false,
       "preview_urls": false,
-      "vars": { "HOME_URL": "https://nosnocabo.com.br/" },
+      "vars": {
+        "HOME_URL": "https://nosnocabo.com.br/",
+        "ALERT_FROM": "alertas@nosnocabo.com.br",
+      },
+      "send_email": [{ "name": "ALERT_EMAIL" }],
       "queues": {
         "producers": [
           { "binding": "MODERATION_QUEUE", "queue": "moderation-jobs-staging" },
