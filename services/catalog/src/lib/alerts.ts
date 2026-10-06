@@ -43,7 +43,7 @@ export function reportAlertEmail(alert: ReportAlert, addressing: Addressing) {
     ...(alert.comment ? [`Comentário: ${alert.comment}`] : []),
     `Página: ${addressing.homeUrl}website/${website.id}`,
     '',
-    'O site continua publicado até você decidir. Para revisar: pnpm run review:staging list',
+    'O site continua publicado até você decidir. Para revisar: pnpm review list',
   ].join('\r\n')
 
   return [

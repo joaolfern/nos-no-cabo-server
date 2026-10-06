@@ -51,7 +51,7 @@ describe('reportAlertEmail', () => {
     expect(raw).toContain('Motivo: Spam ou golpe')
     expect(raw).toContain('Só propaganda')
     expect(raw).toContain('https://nosnocabo.com.br/website/01SITE')
-    expect(raw).toContain('pnpm run review:staging list')
+    expect(raw).toContain('pnpm review list')
   })
 })
 
