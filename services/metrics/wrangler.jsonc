@@ -1,0 +1,52 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "nnc-metrics",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "observability": { "enabled": true },
+  // Private: the router records clicks over RPC and the gateway forwards /stats and /votes.
+  "workers_dev": false,
+  "preview_urls": false,
+  // TURNSTILE_SECRET and VISITOR_SALT are secrets: .dev.vars locally, `wrangler secret put` remotely.
+  // Rank push every 3 hours (ADR 0006) to save D1 writes. The Free plan allows 5 cron triggers.
+  "triggers": { "crons": ["23 */3 * * *"] },
+  "d1_databases": [
+    {
+      "binding": "METRICS_DB",
+      "database_name": "nnc-metrics",
+      // Not the catalog's placeholder: locally the id picks the SQLite file.
+      "database_id": "00000000-0000-0000-0000-00000000000d",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "services": [
+    {
+      "binding": "CATALOG",
+      "service": "nnc-catalog",
+      "entrypoint": "CatalogRpc",
+    },
+  ],
+  "env": {
+    "staging": {
+      "name": "nnc-metrics-staging",
+      "workers_dev": false,
+      "preview_urls": false,
+      "triggers": { "crons": ["23 */3 * * *"] },
+      "d1_databases": [
+        {
+          "binding": "METRICS_DB",
+          "database_name": "nnc-metrics-staging",
+          "database_id": "61cd2a08-93eb-4585-8be0-e3e7a200b70b",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "services": [
+        {
+          "binding": "CATALOG",
+          "service": "nnc-catalog-staging",
+          "entrypoint": "CatalogRpc",
+        },
+      ],
+    },
+  },
+}

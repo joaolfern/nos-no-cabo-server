@@ -23,6 +23,55 @@ describe('gateway', () => {
     expect(await other.json()).toEqual({ path: '/v1/websites/01SITE' })
   })
 
+  it('sends stats and votes to the metrics Worker', async () => {
+    const stats = await call('/v1/websites/01SITE/stats')
+    expect(await stats.json()).toEqual({
+      worker: 'metrics',
+      path: '/v1/websites/01SITE/stats',
+    })
+
+    const vote = await call('/v1/websites/01SITE/votes', { method: 'POST' })
+    expect(await vote.json()).toEqual({
+      worker: 'metrics',
+      path: '/v1/websites/01SITE/votes',
+    })
+  })
+
+  it('combines the website, its neighbours and its stats into one page', async () => {
+    const response = await call('/v1/websites/01SITE/page')
+
+    expect(response.headers.get('cache-control')).toBe('no-store')
+    expect(await response.json()).toEqual({
+      website: { path: '/v1/websites/01SITE' },
+      neighbours: { path: '/v1/websites/01SITE/neighbours' },
+      stats: { worker: 'metrics', path: '/v1/websites/01SITE/stats' },
+    })
+  })
+
+  it('answers 404 for an unknown site page', async () => {
+    const response = await call('/v1/websites/NADA/page', {
+      headers: { origin: 'http://localhost:5173' },
+    })
+
+    expect(response.status).toBe(404)
+    expect(await response.json()).toMatchObject({
+      error: { code: 'not_found' },
+    })
+    expect(response.headers.get('access-control-allow-origin')).toBe(
+      'http://localhost:5173'
+    )
+  })
+
+  it('still serves the page without neighbours or stats', async () => {
+    const inReview = await (await call('/v1/websites/REVISAO/page')).json()
+    expect(inReview).toMatchObject({
+      neighbours: { previous: null, next: null, random: null },
+    })
+
+    const noStats = await (await call('/v1/websites/SEMSTATS/page')).json()
+    expect(noStats).toMatchObject({ stats: null })
+  })
+
   it('allows the web app origins, including Pages previews, and nothing else', async () => {
     const allowed = [
       'http://localhost:5173',

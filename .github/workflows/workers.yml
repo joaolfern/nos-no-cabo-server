@@ -41,6 +41,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Order matters: Workers that bind to CatalogRpc or to another Worker deploy after it.
       - run: pnpm --filter @nosnocabo/catalog run deploy:staging
+      - run: pnpm --filter @nosnocabo/metrics run deploy:staging
       - run: pnpm --filter @nosnocabo/verification run deploy:staging
       - run: pnpm --filter @nosnocabo/router run deploy:staging
       - run: pnpm --filter @nosnocabo/gateway run deploy:staging

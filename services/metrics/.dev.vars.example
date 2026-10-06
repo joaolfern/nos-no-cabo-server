@@ -1,0 +1,3 @@
+# Copied to .dev.vars by `pnpm dev`. Cloudflare's Turnstile test secret accepts any token.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+VISITOR_SALT=local-only-salt

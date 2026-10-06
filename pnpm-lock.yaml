@@ -87,6 +87,31 @@ importers:
         specifier: ^4.146.0
         version: 4.147.0(@cloudflare/workers-types@5.20261004.1)
 
+  services/metrics:
+    dependencies:
+      '@nosnocabo/contract':
+        specifier: workspace:*
+        version: link:../../packages/contract
+      '@nosnocabo/ip':
+        specifier: workspace:*
+        version: link:../../packages/ip
+      hono:
+        specifier: ^4.13.12
+        version: 4.13.13
+    devDependencies:
+      '@cloudflare/vitest-pool-workers':
+        specifier: ^0.22.0
+        version: 0.22.0(@cloudflare/workers-types@5.20261004.1)(@vitest/runner@4.1.11)(@vitest/snapshot@4.1.11)(vitest@4.1.11(vite@8.3.2(esbuild@0.28.1)))
+      '@cloudflare/workers-types':
+        specifier: ^5.20261001.1
+        version: 5.20261004.1
+      vitest:
+        specifier: ^4.1.11
+        version: 4.1.11(vite@8.3.2(esbuild@0.28.1))
+      wrangler:
+        specifier: ^4.146.0
+        version: 4.147.0(@cloudflare/workers-types@5.20261004.1)
+
   services/router:
     dependencies:
       hono:

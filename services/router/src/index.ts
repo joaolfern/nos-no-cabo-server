@@ -22,6 +22,8 @@ export default {
       getSites: () => ringFor(env).get(),
       homeUrl: () => env.HOME_URL,
       random: Math.random,
+      recordClick: (click) =>
+        ctx.waitUntil(env.METRICS.recordClick(click).catch(() => {})),
     })
     return app.fetch(request, env, ctx)
   },

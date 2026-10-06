@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "migrate:local": "wrangler d1 migrations apply DB --local",
+    "migrate:metrics": "wrangler d1 migrations apply METRICS_DB --local -c ../metrics/wrangler.jsonc --persist-to .wrangler/state",
     "deploy:staging": "wrangler d1 migrations apply DB --remote --env staging && wrangler deploy --env staging",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

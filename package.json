@@ -4,13 +4,13 @@
   "type": "module",
   "scripts": {
     "postinstall": "pnpm --filter @nosnocabo/contract build",
-    "dev": "cd services/catalog && ([ -f .dev.vars ] || cp .dev.vars.example .dev.vars) && pnpm run migrate:local && wrangler dev -c ../gateway/wrangler.jsonc -c wrangler.jsonc -c ../verification/wrangler.jsonc $([ -f ../moderation/wrangler.jsonc ] && echo -c ../moderation/wrangler.jsonc) --persist-to .wrangler/state",
+    "dev": "cd services/catalog && ([ -f .dev.vars ] || cp .dev.vars.example .dev.vars) && ([ -f ../metrics/.dev.vars ] || cp ../metrics/.dev.vars.example ../metrics/.dev.vars) && pnpm run migrate:local && pnpm run migrate:metrics && wrangler dev -c ../gateway/wrangler.jsonc -c wrangler.jsonc -c ../verification/wrangler.jsonc -c ../metrics/wrangler.jsonc $([ -f ../moderation/wrangler.jsonc ] && echo -c ../moderation/wrangler.jsonc) --persist-to .wrangler/state",
     "build": "pnpm -r --if-present build",
     "typecheck": "pnpm --filter @nosnocabo/contract build && pnpm -r --if-present typecheck",
     "test": "pnpm --filter @nosnocabo/contract build && pnpm -r --if-present test",
     "typecheck:moderation": "if [ -f services/moderation/package.json ]; then pnpm --dir services/moderation typecheck; else echo 'services/moderation is not checked out (private submodule).'; fi",
     "test:moderation": "if [ -f services/moderation/package.json ]; then pnpm --dir services/moderation test; else echo 'services/moderation is not checked out (private submodule).'; fi",
-    "dev:router": "cd services/catalog && wrangler dev -c ../router/wrangler.jsonc -c wrangler.jsonc --persist-to .wrangler/state --port 8788",
+    "dev:router": "cd services/catalog && wrangler dev -c ../router/wrangler.jsonc -c wrangler.jsonc -c ../metrics/wrangler.jsonc --persist-to .wrangler/state --port 8788",
     "format": "prettier --write \"packages/*/src/**\" \"services/*/src/**\" \"services/*/test/**\" \"packages/*/test/**\""
   },
   "devDependencies": {

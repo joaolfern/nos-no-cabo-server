@@ -3,6 +3,7 @@ packages:
   - packages/*
   - services/catalog
   - services/gateway
+  - services/metrics
   - services/router
   - services/verification
 

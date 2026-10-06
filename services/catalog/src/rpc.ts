@@ -16,6 +16,12 @@ import {
   recordVerification,
 } from './db/verification'
 import type { Env } from './env'
+import {
+  type MetricsUpdate,
+  getRankInputs,
+  isPublished,
+  setMetrics,
+} from './db/metrics'
 
 // Reached only through service bindings; the gateway forwards nothing but /v1.
 export class CatalogRpc extends WorkerEntrypoint<Env> {
@@ -66,8 +72,21 @@ export class CatalogRpc extends WorkerEntrypoint<Env> {
   dueForRecheck(limit: number) {
     return dueForRecheck(this.env.DB, limit)
   }
+
+  getRankInputs() {
+    return getRankInputs(this.env.DB)
+  }
+
+  setMetrics(updates: MetricsUpdate[]) {
+    return setMetrics(this.env.DB, updates)
+  }
+
+  isPublished(id: string) {
+    return isPublished(this.env.DB, id)
+  }
 }
 
+export type { MetricsUpdate, RankInput } from './db/metrics'
 export type { ModerationResult, WebsiteForModeration } from './db/moderation'
 export type { RingSite } from './db/ring'
 export type { VerificationKind, VerificationTarget } from './db/verification'

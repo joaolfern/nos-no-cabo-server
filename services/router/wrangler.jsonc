@@ -14,6 +14,11 @@
       "service": "nnc-catalog",
       "entrypoint": "CatalogRpc",
     },
+    {
+      "binding": "METRICS",
+      "service": "nnc-metrics",
+      "entrypoint": "MetricsRpc",
+    },
   ],
   "env": {
     "staging": {
@@ -34,6 +39,11 @@
           "binding": "CATALOG",
           "service": "nnc-catalog-staging",
           "entrypoint": "CatalogRpc",
+        },
+        {
+          "binding": "METRICS",
+          "service": "nnc-metrics-staging",
+          "entrypoint": "MetricsRpc",
         },
       ],
     },

@@ -57,6 +57,7 @@ export function toWebsite(row: WebsiteRow): Website {
     verifiedAt: toIso(row.verified_at),
     submittedAt: toIso(row.submitted_at) as string,
     publishedAt: toIso(row.published_at),
+    likes: row.likes,
   }
 }
 

@@ -1,8 +1,8 @@
 import type { CatalogRpc } from '../../catalog/src/rpc'
-import type { MetricsRpc } from '../../metrics/src/rpc'
 
 export type Env = {
+  METRICS_DB: D1Database
   CATALOG: Service<CatalogRpc>
-  METRICS: Service<MetricsRpc>
-  HOME_URL: string
+  TURNSTILE_SECRET: string
+  VISITOR_SALT: string
 }

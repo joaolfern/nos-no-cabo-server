@@ -12,6 +12,7 @@
   "services": [
     { "binding": "CATALOG", "service": "nnc-catalog" },
     { "binding": "VERIFICATION", "service": "nnc-verification" },
+    { "binding": "METRICS", "service": "nnc-metrics" },
   ],
   "env": {
     "staging": {
@@ -24,6 +25,7 @@
       "services": [
         { "binding": "CATALOG", "service": "nnc-catalog-staging" },
         { "binding": "VERIFICATION", "service": "nnc-verification-staging" },
+        { "binding": "METRICS", "service": "nnc-metrics-staging" },
       ],
     },
   },
