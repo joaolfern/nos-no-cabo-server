@@ -1,3 +1,6 @@
 # Copied to .dev.vars by `npm run dev`. Cloudflare's Turnstile test secret accepts any token.
 TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 IP_HASH_SALT=local-only-salt
+# Web Push (optional): `node scripts/vapidKeys.mjs`; the client needs the same public key.
+# VAPID_PUBLIC_KEY=
+# VAPID_PRIVATE_KEY=

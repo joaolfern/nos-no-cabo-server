@@ -6,6 +6,7 @@ await applyD1Migrations(env.DB, env.TEST_MIGRATIONS)
 beforeEach(async () => {
   await env.DB.batch([
     env.DB.prepare('DELETE FROM reports'),
+    env.DB.prepare('DELETE FROM push_subscriptions'),
     env.DB.prepare('DELETE FROM moderation_backlog'),
     env.DB.prepare("DELETE FROM counters WHERE name LIKE '%:%'"),
     env.DB.prepare('DELETE FROM website_categories'),

@@ -11,7 +11,10 @@
   // Report alerts (staging): ALERT_EMAIL sends through Email Routing on nosnocabo.com.br. The
   // recipient, ALERT_TO, is a secret so the owner's address stays out of this public repo; it
   // must be a verified Email Routing destination.
+  // Web Push: VAPID_PRIVATE_KEY is a secret; `node scripts/vapidKeys.mjs` makes a key pair.
   "vars": { "HOME_URL": "https://nosnocabo.com.br/" },
+  // Sends pushes for decisions made by the review script and drops week-old subscriptions.
+  "triggers": { "crons": ["41 * * * *"] },
   "queues": {
     "producers": [
       { "binding": "MODERATION_QUEUE", "queue": "moderation-jobs" },
@@ -33,7 +36,9 @@
       "vars": {
         "HOME_URL": "https://nosnocabo.com.br/",
         "ALERT_FROM": "alertas@nosnocabo.com.br",
+        "VAPID_PUBLIC_KEY": "BKW2wdiZwYqb7r6ZJIQqJBkyA0HcTodTKX5wIBwUuUpyt8-XV9WJFWtRUGICBiexdFiW4V0mcShTI6gVqDc9YH0",
       },
+      "triggers": { "crons": ["41 * * * *"] },
       "send_email": [{ "name": "ALERT_EMAIL" }],
       "queues": {
         "producers": [

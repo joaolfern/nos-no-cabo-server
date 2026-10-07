@@ -16,6 +16,7 @@ import {
   recordVerification,
 } from './db/verification'
 import type { Env } from './env'
+import { pushDecisions } from './lib/pushNotifications'
 import {
   type MetricsUpdate,
   getRankInputs,
@@ -29,8 +30,12 @@ export class CatalogRpc extends WorkerEntrypoint<Env> {
     return getForModeration(this.env.DB, id)
   }
 
-  applyModeration(id: string, result: ModerationResult) {
-    return applyModeration(this.env.DB, id, result)
+  async applyModeration(id: string, result: ModerationResult) {
+    const changed = await applyModeration(this.env.DB, id, result)
+    if (changed && result.decision !== 'hold') {
+      this.ctx.waitUntil(pushDecisions(this.env, id))
+    }
+    return changed
   }
 
   getRing() {

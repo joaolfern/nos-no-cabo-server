@@ -3,6 +3,7 @@ import manifest from '../package.json'
 import categoriesSource from '../src/categories.ts?raw'
 import urlSource from '../src/url.ts?raw'
 import {
+  PushSubscriptionSubmission,
   ReportSubmission,
   VoteSubmission,
   WebsiteListQuery,
@@ -130,6 +131,32 @@ describe('WebsitePage', () => {
     expect(
       WebsitePage.safeParse({ website, neighbours, stats: null }).success
     ).toBe(true)
+  })
+})
+
+describe('PushSubscriptionSubmission', () => {
+  const subscription = {
+    endpoint: 'https://fcm.googleapis.com/fcm/send/abc',
+    expirationTime: null,
+    keys: { p256dh: 'BOr_k-1', auth: 'c2VjcmV0' },
+  }
+
+  it('accepts what PushSubscription.toJSON() returns', () => {
+    expect(PushSubscriptionSubmission.parse(subscription)).toEqual({
+      endpoint: subscription.endpoint,
+      keys: subscription.keys,
+    })
+  })
+
+  it('rejects a plain-http endpoint and keys that are not base64url', () => {
+    const invalid = [
+      { ...subscription, endpoint: 'http://fcm.googleapis.com/x' },
+      { ...subscription, keys: { ...subscription.keys, auth: 'a b' } },
+      { endpoint: subscription.endpoint },
+    ]
+    for (const body of invalid) {
+      expect(PushSubscriptionSubmission.safeParse(body).success).toBe(false)
+    }
   })
 })
 

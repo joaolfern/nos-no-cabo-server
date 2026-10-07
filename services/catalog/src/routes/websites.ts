@@ -1,4 +1,5 @@
 import {
+  PushSubscriptionSubmission,
   ReportSubmission,
   WebsiteListQuery,
   WebsiteSubmission,
@@ -7,6 +8,7 @@ import {
 } from '@nosnocabo/contract'
 import { type Context, Hono } from 'hono'
 import { flagForReview } from '../db/moderation'
+import { addPushSubscription } from '../db/push'
 import { addReport, flagReported } from '../db/reports'
 import { getNeighbours } from '../db/ring'
 import {
@@ -22,6 +24,7 @@ import { NO_STORE, PUBLIC_LIST_CACHE } from '../lib/cache'
 import { apiError, duplicateError } from '../lib/errors'
 import { sendReportAlert } from '../lib/alerts'
 import { hashIp } from '../lib/ipHash'
+import { isPushServiceEndpoint } from '../lib/pushNotifications'
 import { UnreachableError, scrapePreview } from '../lib/scrape'
 import { TURNSTILE_HEADER, verifyTurnstile } from '../lib/turnstile'
 import { ulid } from '../lib/ulid'
@@ -119,6 +122,28 @@ websites.post('/:id/reports', async (c) => {
   }
 
   return c.body(null, 202)
+})
+
+websites.post('/:id/subscriptions', async (c) => {
+  const body = await c.req.json().catch(() => null)
+  const subscription = PushSubscriptionSubmission.safeParse(body)
+  if (
+    !subscription.success ||
+    !isPushServiceEndpoint(subscription.data.endpoint)
+  ) {
+    return apiError(c, 422, 'invalid', 'Inscrição de notificação inválida.')
+  }
+
+  const { endpoint, keys } = subscription.data
+  const added = await addPushSubscription(c.env.DB, c.req.param('id'), {
+    endpoint,
+    ...keys,
+  })
+  if (!added) {
+    return apiError(c, 404, 'not_found', 'Site não está em análise.')
+  }
+
+  return c.body(null, 204)
 })
 
 websites.get('/:id', async (c) => {
