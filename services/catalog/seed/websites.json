@@ -14,32 +14,6 @@
     "verified": false
   },
   {
-    "name": "QEdu",
-    "url": "https://qedu.org.br",
-    "description": "Reúne dados públicos da educação básica, como Saeb e Ideb, em painéis claros sobre escolas, municípios e estados.",
-    "color": null,
-    "faviconUrl": "https://qedu.org.br/favicon.ico",
-    "repo": null,
-    "categories": [
-      "educacao"
-    ],
-    "publishedAt": "2025-03-10T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Nova Escola",
-    "url": "https://novaescola.org.br",
-    "description": "Plataforma gratuita com planos de aula, cursos e conteúdos alinhados à BNCC para professores da educação básica.",
-    "color": null,
-    "faviconUrl": "https://novaescola.org.br/apple-icon-57x57.png",
-    "repo": null,
-    "categories": [
-      "educacao"
-    ],
-    "publishedAt": "2024-08-15T00:00:00.000Z",
-    "verified": false
-  },
-  {
     "name": "Cataki",
     "url": "https://www.cataki.org",
     "description": "Aplicativo que conecta catadores de materiais recicláveis a quem precisa de coleta, aumentando a renda e a visibilidade desse trabalho.",
@@ -51,128 +25,6 @@
       "meio-ambiente"
     ],
     "publishedAt": "2025-01-20T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Prosas",
-    "url": "https://prosas.com.br",
-    "description": "Plataforma de seleção e monitoramento de projetos sociais que conecta patrocinadores, editais e organizações da sociedade civil.",
-    "color": null,
-    "faviconUrl": "https://prosas.com.br/favicon.ico",
-    "repo": null,
-    "categories": [
-      "trabalho",
-      "comunidades"
-    ],
-    "publishedAt": "2024-11-05T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "VLibras",
-    "url": "https://vlibras.gov.br",
-    "description": "Conjunto gratuito e de código aberto de ferramentas que traduz conteúdos digitais em português para a Língua Brasileira de Sinais (Libras).",
-    "color": "#00a300",
-    "faviconUrl": "https://www.gov.br/governodigital/++theme++padrao_govbr/favicons/apple-touch-icon.png",
-    "repo": null,
-    "categories": [
-      "inclusao"
-    ],
-    "publishedAt": "2025-06-01T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Guiaderodas",
-    "url": "https://guiaderodas.com",
-    "description": "Aplicativo colaborativo para avaliar e mapear a acessibilidade de lugares para pessoas com deficiência ou mobilidade reduzida.",
-    "color": null,
-    "faviconUrl": "https://guiaderodas.com/wp-content/uploads/2026/08/cropped-Favicon-32x32.png",
-    "repo": null,
-    "categories": [
-      "inclusao",
-      "cidades"
-    ],
-    "publishedAt": "2024-10-12T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Tainacan",
-    "url": "https://tainacan.org",
-    "description": "Plataforma de código aberto para repositórios digitais em WordPress, usada por museus, arquivos e bibliotecas para publicar acervos.",
-    "color": "#1a57a5",
-    "faviconUrl": "https://tainacan.org/wp-content/uploads/2018/05/cropped-cropped-logo-300x300-2-32x32.png",
-    "repo": "https://github.com/tainacan/tainacan",
-    "categories": [
-      "arte-e-cultura"
-    ],
-    "publishedAt": "2024-05-01T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Dicionário de Favelas Marielle Franco",
-    "url": "https://wikifavelas.com.br",
-    "description": "Wiki de acesso aberto que reúne histórias, memórias e conhecimentos produzidos nas favelas e periferias.",
-    "color": null,
-    "faviconUrl": "https://wikifavelas.com.br/themes/images/favicon.ico",
-    "repo": null,
-    "categories": [
-      "arte-e-cultura",
-      "comunidades"
-    ],
-    "publishedAt": "2025-02-14T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Querido Diário",
-    "url": "https://queridodiario.org.br",
-    "description": "Extrai e organiza os diários oficiais dos municípios com tecnologia aberta, facilitando o acompanhamento dos atos das prefeituras.",
-    "color": "#6c4b97",
-    "faviconUrl": "https://queridodiario.org.br/favicon.ico",
-    "repo": "https://github.com/okfn-brasil/querido-diario",
-    "categories": [
-      "ia-e-iot",
-      "cidades"
-    ],
-    "publishedAt": "2025-09-01T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Operação Serenata de Amor",
-    "url": "https://serenata.ai",
-    "description": "Projeto aberto que usa inteligência artificial para analisar gastos de parlamentares e apontar possíveis irregularidades.",
-    "color": null,
-    "faviconUrl": null,
-    "repo": "https://github.com/okfn-brasil/serenata-de-amor",
-    "categories": [
-      "ia-e-iot",
-      "cidades"
-    ],
-    "publishedAt": "2024-07-01T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "OpenDataSUS",
-    "url": "https://dadosabertos.saude.gov.br",
-    "description": "Portal de dados abertos do SUS, com indicadores e bases públicas de saúde para pesquisa e controle social.",
-    "color": null,
-    "faviconUrl": "https://dadosabertos.saude.gov.br/favicons/apple-touch-icon.png",
-    "repo": null,
-    "categories": [
-      "saude"
-    ],
-    "publishedAt": "2025-04-22T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "ImpulsoGov",
-    "url": "https://impulsogov.org",
-    "description": "Organização sem fins lucrativos que cria ferramentas de dados para apoiar equipes do SUS na atenção primária à saúde.",
-    "color": null,
-    "faviconUrl": "https://images.squarespace-cdn.com/content/v1/67fd2069e17029186d16a300/daa3681e-c1f6-4eff-8efa-3d73963a8f78/favicon.ico?format=100w",
-    "repo": null,
-    "categories": [
-      "saude"
-    ],
-    "publishedAt": "2025-07-08T00:00:00.000Z",
     "verified": false
   },
   {
@@ -200,46 +52,6 @@
       "comunidades"
     ],
     "publishedAt": "2024-09-18T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Fogo Cruzado",
-    "url": "https://fogocruzado.org.br",
-    "description": "Laboratório de dados que registra tiroteios e violência armada em regiões metropolitanas e publica os dados de forma aberta.",
-    "color": null,
-    "faviconUrl": "https://fogocruzado.org.br/favicon.ico",
-    "repo": null,
-    "categories": [
-      "cidades"
-    ],
-    "publishedAt": "2025-08-03T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Brasil Participativo",
-    "url": "https://brasilparticipativo.presidencia.gov.br",
-    "description": "Plataforma oficial de participação social do Governo Federal para consultas públicas, conferências e propostas colaborativas.",
-    "color": "#1351b4",
-    "faviconUrl": null,
-    "repo": null,
-    "categories": [
-      "cidades",
-      "comunidades"
-    ],
-    "publishedAt": "2025-03-28T00:00:00.000Z",
-    "verified": false
-  },
-  {
-    "name": "Atados",
-    "url": "https://atados.com.br",
-    "description": "Plataforma de voluntariado que conecta pessoas a organizações sociais e causas em todo o Brasil.",
-    "color": "#dc3545",
-    "faviconUrl": "https://www.atados.com.br/static/logo/logo-light.svg",
-    "repo": null,
-    "categories": [
-      "comunidades"
-    ],
-    "publishedAt": "2024-06-10T00:00:00.000Z",
     "verified": false
   },
   {
