@@ -1,5 +1,6 @@
 import type { ReportReason } from '@nosnocabo/contract'
 import { EmailMessage } from 'cloudflare:email'
+import { REVIEW_USAGE, reviewAddress } from './reviewReplies'
 
 const REASON_LABELS: Record<ReportReason, string> = {
   inappropriate: 'Conteúdo impróprio',
@@ -15,12 +16,20 @@ export type ReportAlert = {
   comment?: string | null
 }
 
-type Addressing = { from: string; to: string; homeUrl: string; now: number }
+type Addressing = {
+  from: string
+  to: string
+  // Signed address that turns a reply into a review decision; null without REVIEW_SECRET.
+  replyTo: string | null
+  homeUrl: string
+  now: number
+}
 
 export type AlertEnv = {
   ALERT_EMAIL?: SendEmail
   ALERT_FROM?: string
   ALERT_TO?: string
+  REVIEW_SECRET?: string
   HOME_URL: string
 }
 
@@ -43,12 +52,15 @@ export function reportAlertEmail(alert: ReportAlert, addressing: Addressing) {
     ...(alert.comment ? [`Comentário: ${alert.comment}`] : []),
     `Página: ${addressing.homeUrl}website/${website.id}`,
     '',
-    'O site continua publicado até você decidir. Para revisar: pnpm review list',
+    'O site continua publicado até você decidir.',
+    ...(addressing.replyTo ? ['', REVIEW_USAGE, ''] : []),
+    'Para revisar no terminal: pnpm review list',
   ].join('\r\n')
 
   return [
     `From: ${encodeHeader('Nós no Cabo')} <${addressing.from}>`,
     `To: ${addressing.to}`,
+    ...(addressing.replyTo ? [`Reply-To: ${addressing.replyTo}`] : []),
     `Subject: ${encodeHeader(`Denúncia: ${oneLine(website.name)}`)}`,
     `Message-ID: <${crypto.randomUUID()}@${domain}>`,
     `Date: ${new Date(addressing.now).toUTCString()}`,
@@ -68,6 +80,7 @@ export async function sendReportAlert(env: AlertEnv, alert: ReportAlert) {
   const raw = reportAlertEmail(alert, {
     from: ALERT_FROM,
     to: ALERT_TO,
+    replyTo: await reviewAddress(env, alert.website.id),
     homeUrl: env.HOME_URL,
     now: Date.now(),
   })

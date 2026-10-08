@@ -11,6 +11,9 @@
   // Report alerts (staging): ALERT_EMAIL sends through Email Routing on nosnocabo.com.br. The
   // recipient, ALERT_TO, is a secret so the owner's address stays out of this public repo; it
   // must be a verified Email Routing destination.
+  // Review by reply: with the REVIEW_SECRET secret set, alerts carry a signed Reply-To
+  // (alertas+<id>.<signature>@) and the email() handler applies "dismiss" or "ban [reason]".
+  // Needs subaddressing on and an Email Routing rule sending alertas@ to this worker.
   // Web Push: VAPID_PRIVATE_KEY is a secret; `node scripts/vapidKeys.mjs` makes a key pair.
   "vars": { "HOME_URL": "https://nosnocabo.com.br/" },
   // Sends pushes for decisions made by the review script and drops week-old subscriptions.

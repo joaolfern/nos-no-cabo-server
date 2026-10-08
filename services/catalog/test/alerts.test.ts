@@ -27,6 +27,7 @@ describe('reportAlertEmail', () => {
     {
       from: 'alertas@nosnocabo.com.br',
       to: 'dono@example.com',
+      replyTo: 'alertas+01SITE.abc@nosnocabo.com.br',
       homeUrl: 'https://nosnocabo.com.br/',
       now: Date.UTC(2026, 9, 2, 12),
     }
@@ -52,6 +53,12 @@ describe('reportAlertEmail', () => {
     expect(raw).toContain('Só propaganda')
     expect(raw).toContain('https://nosnocabo.com.br/website/01SITE')
     expect(raw).toContain('pnpm review list')
+  })
+
+  it('asks for a reply to the signed review address', () => {
+    expect(raw).toMatch(/^Reply-To: alertas\+01SITE\.abc@nosnocabo\.com\.br$/m)
+    expect(raw).toContain('dismiss')
+    expect(raw).toContain('ban unreachable')
   })
 })
 
