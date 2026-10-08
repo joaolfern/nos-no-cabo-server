@@ -10,7 +10,7 @@
     "test": "pnpm --filter @nosnocabo/contract build && pnpm -r --if-present test",
     "typecheck:moderation": "if [ -f services/moderation/package.json ]; then pnpm --dir services/moderation typecheck; else echo 'services/moderation is not checked out (private submodule).'; fi",
     "review": "sh scripts/review.sh",
-    "test:moderation": "if [ -f services/moderation/package.json ]; then pnpm --dir services/moderation test; else echo 'services/moderation is not checked out (private submodule).'; fi",
+    "test:moderation": "sh scripts/test-moderation.sh",
     "dev:router": "cd services/catalog && wrangler dev -c ../router/wrangler.jsonc -c wrangler.jsonc -c ../metrics/wrangler.jsonc --persist-to .wrangler/state --port 8788",
     "format": "prettier --write \"packages/*/src/**\" \"services/*/src/**\" \"services/*/test/**\" \"packages/*/test/**\""
   },
