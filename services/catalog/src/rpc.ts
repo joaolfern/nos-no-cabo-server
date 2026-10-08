@@ -16,6 +16,7 @@ import {
   recordVerification,
 } from './db/verification'
 import type { Env } from './env'
+import { sendModerationAlert } from './lib/alerts'
 import { pushDecisions } from './lib/pushNotifications'
 import {
   type MetricsUpdate,
@@ -23,6 +24,19 @@ import {
   isPublished,
   setMetrics,
 } from './db/metrics'
+
+// Kept off the class: every method on CatalogRpc is callable over the service binding.
+async function alertOwner(env: Env, id: string, result: ModerationResult) {
+  const website = await getForModeration(env.DB, id)
+  if (!website) return
+  const { verdict, categoriesFlagged } = result
+  await sendModerationAlert(env, {
+    website,
+    outcome: result,
+    verdict,
+    categoriesFlagged,
+  })
+}
 
 // Reached only through service bindings; the gateway forwards nothing but /v1.
 export class CatalogRpc extends WorkerEntrypoint<Env> {
@@ -32,8 +46,11 @@ export class CatalogRpc extends WorkerEntrypoint<Env> {
 
   async applyModeration(id: string, result: ModerationResult) {
     const changed = await applyModeration(this.env.DB, id, result)
-    if (changed && result.decision !== 'hold') {
-      this.ctx.waitUntil(pushDecisions(this.env, id))
+    if (changed) {
+      if (result.decision !== 'hold') {
+        this.ctx.waitUntil(pushDecisions(this.env, id))
+      }
+      this.ctx.waitUntil(alertOwner(this.env, id, result))
     }
     return changed
   }

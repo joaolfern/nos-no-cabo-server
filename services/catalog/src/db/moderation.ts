@@ -55,10 +55,14 @@ function outcomeUpdate(db: D1Database, id: string, outcome: ModerationOutcome) {
              review_flag = NULL ${stillChecking}`
         )
         .bind(outcome.reason, id)
+    // A repeated hold changes nothing, so it doesn't count as a new decision.
     case 'hold':
       return db
-        .prepare(`UPDATE websites SET review_flag = ? ${stillChecking}`)
-        .bind(outcome.flag, id)
+        .prepare(
+          `UPDATE websites SET review_flag = ? ${stillChecking}
+             AND review_flag IS NOT ?`
+        )
+        .bind(outcome.flag, id, outcome.flag)
   }
 }
 

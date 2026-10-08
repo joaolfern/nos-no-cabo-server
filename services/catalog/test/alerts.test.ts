@@ -2,7 +2,8 @@ import type { Website } from '@nosnocabo/contract'
 import { env } from 'cloudflare:test'
 import { describe, expect, it, vi } from 'vitest'
 import { app } from '../src/app'
-import { reportAlertEmail } from '../src/lib/alerts'
+import { moderationAlertEmail, reportAlertEmail } from '../src/lib/alerts'
+import { CatalogRpc, type ModerationResult } from '../src/rpc'
 import { PASSING_TURNSTILE_TOKEN } from './fakeInternet'
 import { SUBMISSION, submit } from './api'
 
@@ -154,5 +155,151 @@ describe('report alert on the reports route', () => {
     )
     expect((await failing.response).status).toBe(202)
     await Promise.all(failing.pending)
+  })
+})
+
+const ADDRESSING = {
+  from: 'alertas@nosnocabo.com.br',
+  to: 'dono@example.com',
+  replyTo: 'alertas+01SITE.abc@nosnocabo.com.br',
+  homeUrl: 'https://nosnocabo.com.br/',
+  now: Date.UTC(2026, 9, 2, 12),
+}
+
+describe('moderationAlertEmail', () => {
+  const website = {
+    id: '01SITE',
+    name: 'Projeto\r\nBcc: x@evil.dev',
+    url: 'https://projeto.dev/',
+    description: 'Um projeto legal',
+  }
+
+  it('names the outcome in the subject', () => {
+    const subject = (
+      outcome: Parameters<typeof moderationAlertEmail>[0]['outcome']
+    ) => decodeSubject(moderationAlertEmail({ website, outcome }, ADDRESSING))
+
+    expect(subject({ decision: 'publish' })).toBe(
+      'Novo site: Projeto Bcc: x@evil.dev, publicado'
+    )
+    expect(subject({ decision: 'reject', reason: 'unsafe' })).toBe(
+      'Novo site: Projeto Bcc: x@evil.dev, recusado'
+    )
+    expect(subject({ decision: 'hold', flag: 'unreachable' })).toBe(
+      'Novo site: Projeto Bcc: x@evil.dev, aguardando sua revisão'
+    )
+  })
+
+  it('says what the check decided and how to answer it', () => {
+    const raw = moderationAlertEmail(
+      {
+        website,
+        outcome: { decision: 'reject', reason: 'unsafe' },
+        verdict: 'unsafe',
+        categoriesFlagged: ['S1', 'S4'],
+      },
+      ADDRESSING
+    )
+
+    expect(raw).not.toMatch(/^Bcc:/m)
+    expect(raw).toMatch(/^Reply-To: alertas\+01SITE\.abc@nosnocabo\.com\.br$/m)
+    expect(raw).toContain('recusou o site (motivo: unsafe)')
+    expect(raw).toContain('Veredito da IA: unsafe (S1, S4)')
+    expect(raw).toContain('Um projeto legal')
+    expect(raw).not.toContain('/website/01SITE')
+  })
+
+  it('links the page only once the site is published', () => {
+    const raw = moderationAlertEmail(
+      { website, outcome: { decision: 'publish' } },
+      ADDRESSING
+    )
+    expect(raw).toContain('https://nosnocabo.com.br/website/01SITE')
+  })
+})
+
+describe('new site alert', () => {
+  const SAFE: ModerationResult = {
+    decision: 'publish',
+    verdict: 'safe',
+    categoriesFlagged: [],
+    model: 'test-model',
+  }
+
+  function alerting() {
+    const send = vi.fn(async (_message: unknown) => ({ messageId: 'sent' }))
+    const pending: Promise<unknown>[] = []
+    const ctx = {
+      waitUntil: (promise: Promise<unknown>) => pending.push(promise),
+      passThroughOnException: () => {},
+      props: {},
+    } as unknown as ExecutionContext
+    const alertEnv = {
+      ...env,
+      ALERT_EMAIL: { send },
+      ALERT_FROM: 'alertas@nosnocabo.com.br',
+      ALERT_TO: 'dono@example.com',
+    } as typeof env
+    return { send, pending, ctx, alertEnv }
+  }
+
+  it('emails once when moderation decides a site, not on a retry', async () => {
+    const { send, pending, ctx, alertEnv } = alerting()
+    const rpc = new CatalogRpc(ctx, alertEnv)
+    const website = (await (await submit(SUBMISSION)).json()) as Website
+
+    expect(await rpc.applyModeration(website.id, SAFE)).toBe(true)
+    expect(await rpc.applyModeration(website.id, SAFE)).toBe(false)
+    await Promise.all(pending)
+
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
+  it('emails once for a held site, even if the hold is applied again', async () => {
+    const { send, pending, ctx, alertEnv } = alerting()
+    const rpc = new CatalogRpc(ctx, alertEnv)
+    const website = (await (await submit(SUBMISSION)).json()) as Website
+    const hold: ModerationResult = {
+      ...SAFE,
+      decision: 'hold',
+      flag: 'unreachable',
+      verdict: 'error',
+    }
+
+    expect(await rpc.applyModeration(website.id, hold)).toBe(true)
+    expect(await rpc.applyModeration(website.id, hold)).toBe(false)
+    await Promise.all(pending)
+
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
+  it('emails a held alert when the moderation queue is down', async () => {
+    const { send, pending, ctx, alertEnv } = alerting()
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const response = await app.request(
+      '/v1/websites',
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'cf-turnstile-response': PASSING_TURNSTILE_TOKEN,
+          'cf-connecting-ip': '198.51.100.9',
+        },
+        body: JSON.stringify(SUBMISSION),
+      },
+      {
+        ...alertEnv,
+        MODERATION_QUEUE: {
+          send: vi.fn(async () => {
+            throw new Error('down')
+          }),
+        },
+      },
+      ctx
+    )
+    expect(response.status).toBe(202)
+    await Promise.all(pending)
+
+    expect(send).toHaveBeenCalledTimes(1)
   })
 })

@@ -22,7 +22,7 @@ import {
 import type { AppContext } from '../env'
 import { NO_STORE, PUBLIC_LIST_CACHE } from '../lib/cache'
 import { apiError, duplicateError } from '../lib/errors'
-import { sendReportAlert } from '../lib/alerts'
+import { sendModerationAlert, sendReportAlert } from '../lib/alerts'
 import { hashIp } from '../lib/ipHash'
 import { isPushServiceEndpoint } from '../lib/pushNotifications'
 import { UnreachableError, scrapePreview } from '../lib/scrape'
@@ -210,6 +210,13 @@ websites.post('/', async (c) => {
   } catch (error) {
     console.error(error)
     await flagForReview(c.env.DB, id, 'model_error')
+    const { name, description } = submission.data
+    c.executionCtx.waitUntil(
+      sendModerationAlert(c.env, {
+        website: { id, name, url, description },
+        outcome: { decision: 'hold', flag: 'model_error' },
+      })
+    )
   }
 
   return c.json(await getWebsite(c.env.DB, id), 202)
